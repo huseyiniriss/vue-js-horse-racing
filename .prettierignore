@@ -3,7 +3,7 @@ coverage
 playwright-report
 test-results
 package-lock.json
-e2e/**/*-snapshots
+e2e/__screenshots__
 scripts/data/*.json
 src/**/assets/*.svg
 src/**/assets/*.meta.ts

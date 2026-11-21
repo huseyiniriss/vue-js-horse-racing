@@ -1,5 +1,8 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 
+const CLOCK_START = new Date('2026-01-01T12:00:00Z')
+const CLOCK_FROZEN_AT = new Date('2026-01-01T12:00:01Z')
+
 /** Longest possible race day with the default rules and timing, plus margin. */
 export const FULL_RACE_DAY_MS = 150_000
 /** Rendering ~9,000 animation frames takes a while in CI; give full-day tests room. */
@@ -34,10 +37,14 @@ export class RaceDayPage {
     this.announcer = page.getByTestId('announcer')
   }
 
-  /** Opens the game with a fixed seed and a controllable clock. */
+  /**
+   * Opens the game with a fixed seed and a frozen clock: time only moves when a test
+   * calls `wait()`, so every frame (and every screenshot) is reproducible.
+   */
   async open(seed = 42): Promise<void> {
-    await this.page.clock.install()
+    await this.page.clock.install({ time: CLOCK_START })
     await this.page.goto(`/?seed=${seed}`)
+    await this.page.clock.pauseAt(CLOCK_FROZEN_AT)
     await documentReady(this.page)
   }
 
@@ -52,6 +59,11 @@ export class RaceDayPage {
   /** Lets race time pass: animation frames fire as if `ms` real milliseconds went by. */
   async wait(ms: number): Promise<void> {
     await this.page.clock.runFor(ms)
+  }
+
+  /** Lets time flow again, e.g. for tools such as axe that rely on real timers. */
+  async releaseClock(): Promise<void> {
+    await this.page.clock.resume()
   }
 
   /** Advances race time in small steps until `done` holds (fails after `maxMs`). */

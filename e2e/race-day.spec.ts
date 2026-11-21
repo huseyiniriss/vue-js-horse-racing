@@ -122,6 +122,7 @@ test.describe('race day', () => {
     await game.togglePlayback()
     await game.wait(1_000)
     await game.togglePlayback()
+    await game.releaseClock()
 
     const { violations } = await new AxeBuilder({ page }).analyze()
     expect(violations.map((violation) => `${violation.id}: ${violation.help}`)).toEqual([])
