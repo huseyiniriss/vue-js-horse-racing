@@ -1,0 +1,91 @@
+/*
+ * Design tokens. Components use these custom properties only: no raw colors,
+ * sizes or durations elsewhere (see docs/decisions/0007-code-conventions.md).
+ *
+ * Direction: a racecourse on race day. Turf green and white rails on the track,
+ * a printed racecard for the panels, silks colors for the horses.
+ */
+:root {
+  /* Color: surfaces */
+  --color-paper: #eef2ee;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f6f8f6;
+  --color-line: #d3dcd5;
+  --color-line-strong: #a9b7ad;
+
+  /* Color: text */
+  --color-ink: #17251c;
+  --color-ink-muted: #526157;
+  --color-ink-inverse: #ffffff;
+
+  /* Color: track */
+  --color-turf: #2e6b3b;
+  --color-turf-stripe: #367a44;
+  --color-rail: #ffffff;
+  --color-lane-line: rgb(255 255 255 / 0.28);
+  --color-marker: rgb(255 255 255 / 0.75);
+
+  /* Color: actions and states */
+  --color-action: #1f5a31;
+  --color-action-hover: #174826;
+  --color-action-pressed: #113a1e;
+  --color-highlight: #fff1b8;
+  --color-focus: #1d5fd1;
+  --color-gold: #c8930a;
+  --color-silver: #8e999f;
+  --color-bronze: #a8662e;
+
+  /* Typography: Archivo's width axis gives condensed numerals and headings from one family */
+  --font-family: 'Archivo Variable', system-ui, sans-serif;
+  --font-stretch-condensed: 80%;
+  --font-stretch-normal: 100%;
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-md: 1rem; /* 16px */
+  --font-size-lg: 1.25rem; /* 20px */
+  --font-size-xl: 1.5625rem; /* 25px */
+  --font-size-2xl: 1.9375rem; /* 31px */
+  --font-weight-regular: 400;
+  --font-weight-medium: 550;
+  --font-weight-bold: 720;
+  --line-height-tight: 1.15;
+  --line-height-body: 1.45;
+
+  /* Space: 4px grid */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* Shape */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --border-width: 1px;
+  --focus-ring: 0 0 0 3px var(--color-focus);
+
+  /* Layout */
+  --layout-max-width: 1600px;
+  --panel-width: 17rem;
+  --lane-height: 2.75rem;
+  --runner-size: 3rem;
+  --gate-width: 2.25rem;
+
+  /* Motion */
+  --duration-instant: 80ms;
+  --duration-fast: 140ms;
+  --duration-base: 240ms;
+  --duration-gallop: 360ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant: 0ms;
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+  }
+}
