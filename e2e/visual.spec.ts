@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test'
 
-import { FULL_RACE_DAY_MS, RaceDayPage } from './support/race-day-page'
+import {
+  FULL_RACE_DAY_MS,
+  FULL_RACE_DAY_TEST_TIMEOUT_MS,
+  RaceDayPage,
+} from './support/race-day-page'
 
 // Seed + frozen clock make every frame reproducible, so screenshots are stable.
 test.describe('visual @visual', () => {
@@ -29,6 +33,7 @@ test.describe('visual @visual', () => {
   })
 
   test('race day complete', async ({ page }) => {
+    test.setTimeout(FULL_RACE_DAY_TEST_TIMEOUT_MS)
     await game.generate()
     await game.togglePlayback()
     await game.wait(FULL_RACE_DAY_MS)

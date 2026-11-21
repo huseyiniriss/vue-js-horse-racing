@@ -1,7 +1,11 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
-import { FULL_RACE_DAY_MS, RaceDayPage } from './support/race-day-page'
+import {
+  FULL_RACE_DAY_MS,
+  FULL_RACE_DAY_TEST_TIMEOUT_MS,
+  RaceDayPage,
+} from './support/race-day-page'
 
 test.describe('race day', () => {
   let game: RaceDayPage
@@ -80,20 +84,25 @@ test.describe('race day', () => {
   })
 
   test('a full race day runs all six rounds in order', async () => {
+    test.setTimeout(FULL_RACE_DAY_TEST_TIMEOUT_MS)
     await game.generate()
     await game.togglePlayback()
     await game.wait(FULL_RACE_DAY_MS)
 
     await expect(game.status).toHaveText('Race day complete')
     await expect(game.resultRounds).toHaveCount(6)
-    const captions = await game.resultRounds.locator('caption').allTextContents()
-    expect(captions.map((caption) => caption.trim())).toEqual([
-      'Round 1, 1,200 m',
-      'Round 2, 1,400 m',
-      'Round 3, 1,600 m',
-      'Round 4, 1,800 m',
-      'Round 5, 2,000 m',
-      'Round 6, 2,200 m',
+    const headings = await game.resultRounds
+      .locator('h3')
+      .evaluateAll((elements) =>
+        elements.map((element) => [...element.children].map((child) => child.textContent.trim())),
+      )
+    expect(headings).toEqual([
+      ['Round 1', '1,200 m'],
+      ['Round 2', '1,400 m'],
+      ['Round 3', '1,600 m'],
+      ['Round 4', '1,800 m'],
+      ['Round 5', '2,000 m'],
+      ['Round 6', '2,200 m'],
     ])
     await expect(game.playbackButton).toBeDisabled()
     await expect(game.generateButton).toBeEnabled()

@@ -2,6 +2,8 @@ import { expect, type Locator, type Page } from '@playwright/test'
 
 /** Longest possible race day with the default rules and timing, plus margin. */
 export const FULL_RACE_DAY_MS = 150_000
+/** Rendering ~9,000 animation frames takes a while in CI; give full-day tests room. */
+export const FULL_RACE_DAY_TEST_TIMEOUT_MS = 180_000
 
 /**
  * Page object for the race day screen. Tests talk in user terms
