@@ -1,4 +1,8 @@
 <script setup lang="ts">
+/**
+ * A tactile, physical-feeling button: the key has visible depth and travels down
+ * when pressed. Hover, focus-visible, pressed and disabled states are all defined.
+ */
 withDefaults(
   defineProps<{
     variant?: 'primary' | 'secondary'
@@ -24,32 +28,32 @@ defineEmits<{ click: [event: MouseEvent] }>()
 
 <style scoped>
 .app-button {
+  --depth-color: var(--color-secondary-depth);
+
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 2.75rem;
-  padding: 0 var(--space-4);
+  min-height: var(--control-min-size);
+  padding: 0 var(--space-5);
   border: var(--border-width) solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
+  box-shadow: 0 var(--button-depth) 0 var(--depth-color);
+  transform: translateY(0);
   transition:
-    background-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-instant) var(--ease-out);
-}
-
-.app-button:active:not(:disabled) {
-  transform: scale(0.97);
-}
-
-.app-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
+    transform var(--duration-instant) var(--ease-out),
+    box-shadow var(--duration-instant) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .app-button--primary {
+  --depth-color: var(--color-action-depth);
+
   min-width: 7.5rem;
   background: var(--color-action);
   color: var(--color-ink-inverse);
@@ -71,7 +75,27 @@ defineEmits<{ click: [event: MouseEvent] }>()
   }
 }
 
+/* Pressed: the key travels down and its edge disappears. */
+.app-button:active:not(:disabled) {
+  box-shadow: 0 calc(var(--button-depth) - var(--button-press)) 0 var(--depth-color);
+  transform: translateY(var(--button-press));
+}
+
 .app-button--primary:active:not(:disabled) {
   background: var(--color-action-pressed);
+}
+
+.app-button:focus-visible {
+  box-shadow:
+    0 var(--button-depth) 0 var(--depth-color),
+    var(--focus-ring);
+}
+
+/* Disabled: flat, as if pushed into the surface, so it reads as unavailable. */
+.app-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+  transform: translateY(var(--button-press));
 }
 </style>

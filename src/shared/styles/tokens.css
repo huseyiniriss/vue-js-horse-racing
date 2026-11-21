@@ -26,10 +26,16 @@
   --color-lane-line: rgb(255 255 255 / 0.14);
   --color-pole: #c8102e;
   --color-horse: #2a1d14;
+  --color-breeches: #f4f1ea;
   --color-horse-shadow: rgb(10 30 15 / 0.35);
-  --color-stall: #23462f;
-  --color-stall-frame: #142b1c;
+  /* Starting stalls: brushed aluminium with black number plates. */
+  --color-stall-light: #f5f7f5;
+  --color-stall: #d9dfdb;
+  --color-stall-shade: #c4ccc6;
+  --color-stall-frame: #9aa79e;
+  --color-plate: #17251c;
   --color-gate: #f4f6f4;
+  --color-rail-band: #1f4a29;
   --color-sign: #ffffff;
   /* Fine grass grain over the mowing bands (tiny inline SVG noise). */
   --turf-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.25 0 0 0 0 0.1 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
@@ -43,6 +49,8 @@
   --color-action: #1f5a31;
   --color-action-hover: #174826;
   --color-action-pressed: #113a1e;
+  --color-action-depth: #0c2b16;
+  --color-secondary-depth: #a9b7ad;
   --color-highlight: #fff1b8;
   --color-focus: #1d5fd1;
   /* Podium: backgrounds take ink text; the -text variants pass WCAG AA on white. */
@@ -84,6 +92,10 @@
   --radius-md: 8px;
   --border-width: 1px;
   --focus-ring: 0 0 0 3px var(--color-focus);
+  /* Tactile buttons: the visible thickness of the key, and how far it travels when pressed. */
+  --button-depth: 4px;
+  --button-press: 3px;
+  --control-min-size: 2.75rem; /* 44px: Apple HIG and WCAG 2.5.5 minimum touch target */
 
   /* Layout */
   --layout-max-width: 1600px;

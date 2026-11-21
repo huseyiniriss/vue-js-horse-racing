@@ -159,7 +159,7 @@ const signs = computed(() => {
 }
 
 .race-track__field {
-  --rail-height: 2.25rem;
+  --rail-height: 2.125rem;
 
   position: relative;
   /* Mowing bands run across the course, like on a real turf track. */
@@ -173,49 +173,47 @@ const signs = computed(() => {
   border-bottom: 3px solid var(--color-rail);
 }
 
-/* The inside running rail: a white rail on short posts, signs and the winning post on it. */
+/* Broadcast-style rail band: a dark strip with the white running rail beneath it. */
 .race-track__rail {
   position: relative;
   height: var(--rail-height);
   margin-left: var(--gate-width);
-  background:
-    linear-gradient(
-      to bottom,
-      transparent calc(100% - 9px),
-      var(--color-rail) calc(100% - 9px) calc(100% - 5px),
-      transparent calc(100% - 5px)
-    ),
-    repeating-linear-gradient(
-        to right,
-        transparent 0 calc(1.5rem - 2px),
-        var(--color-rail) calc(1.5rem - 2px) 1.5rem
-      )
-      bottom / 100% 9px no-repeat;
+  background: linear-gradient(to bottom, var(--color-rail-band), var(--color-turf));
+  border-bottom: 3px solid var(--color-rail);
   container-type: inline-size;
 }
 
 .race-track__sign {
   position: absolute;
-  bottom: 9px;
+  bottom: var(--space-2);
   left: calc(var(--runner-width) + (100% - var(--runner-width)) * var(--fraction));
-  padding: 1px var(--space-1);
-  border-radius: 2px;
-  background: var(--color-sign);
-  color: var(--color-ink);
+  color: var(--color-ink-inverse);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.2;
+  line-height: 1;
   white-space: nowrap;
+  opacity: 0.9;
   transform: translateX(-50%);
-  box-shadow: 0 1px 0 var(--color-stall-frame);
+}
+
+/* A short white marker post under each sign, standing on the rail. */
+.race-track__sign::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  width: 2px;
+  height: calc(var(--space-2) - 2px);
+  background: var(--color-rail);
+  transform: translateX(-50%);
 }
 
 .race-track__winning-post {
   position: absolute;
-  bottom: 5px;
+  bottom: -3px;
   right: 0;
-  width: 3px;
-  height: calc(var(--rail-height) - 12px);
+  width: 4px;
+  height: calc(var(--rail-height) - var(--space-1));
   background: var(--color-rail);
 }
 
@@ -234,7 +232,7 @@ const signs = computed(() => {
 
 .race-track__winning-label {
   position: absolute;
-  top: 0;
+  top: 1px;
   right: calc(100% + var(--space-4));
   color: var(--color-ink-inverse);
   font-size: var(--font-size-xs);
@@ -249,8 +247,9 @@ const signs = computed(() => {
   }
 }
 
+/* Lanes are told apart by a faint line; the mowing bands carry the texture. */
 .race-track__lanes {
-  border-top: 2px solid var(--color-rail);
+  position: relative;
 }
 
 /* The finish line across all lanes, under the winning post. */
@@ -259,8 +258,9 @@ const signs = computed(() => {
   top: var(--rail-height);
   bottom: 0;
   right: 0;
-  width: 3px;
+  width: 4px;
   background: var(--color-rail);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
   pointer-events: none;
 }
 

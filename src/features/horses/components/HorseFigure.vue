@@ -5,9 +5,9 @@ import gallop from '../assets/gallop-frames.json'
  * A racehorse and jockey drawn from Eadweard Muybridge's "The Horse in Motion"
  * (1878, public domain), the photographic study that first showed how a horse gallops.
  *
- * The 15 frames are packed into a sprite and used as a CSS mask, so the figure takes
- * the current text color and the gallop is a single `steps()` animation. A second,
- * clipped sprite paints the jockey in the horse's silks color, in sync.
+ * The 15 frames are packed into sprites used as CSS masks, so each layer takes a
+ * color from CSS and the gallop is a single `steps()` animation per layer:
+ * the horse, the jockey's white breeches, and the jockey's silks, all in sync.
  */
 withDefaults(
   defineProps<{
@@ -48,24 +48,37 @@ const JOCKEY_SPRITE = toMaskUrl(
     .join(''),
 )
 
+const BREECHES_SPRITE = toMaskUrl(
+  gallop.breeches.map((d, i) => `<path transform="translate(${width * i} 0)" d="${d}"/>`).join(''),
+)
+
 const ASPECT_RATIO = width / height
 </script>
 
 <template>
   <span
     class="horse-figure"
-    :class="{ 'horse-figure--galloping': galloping, 'horse-figure--silks': jockey }"
+    :class="{ 'horse-figure--galloping': galloping }"
     :style="{
-      '--horse-sprite': HORSE_SPRITE,
-      '--jockey-sprite': JOCKEY_SPRITE,
-      '--jockey-color': jockey,
       '--frames': frameCount,
       '--frame': frame % frameCount,
       '--phase': phase,
       aspectRatio: ASPECT_RATIO,
     }"
     aria-hidden="true"
-  />
+  >
+    <span class="horse-figure__layer horse-figure__horse" :style="{ '--sprite': HORSE_SPRITE }" />
+    <template v-if="jockey">
+      <span
+        class="horse-figure__layer horse-figure__breeches"
+        :style="{ '--sprite': BREECHES_SPRITE }"
+      />
+      <span
+        class="horse-figure__layer horse-figure__silks"
+        :style="{ '--sprite': JOCKEY_SPRITE, '--jockey-color': jockey }"
+      />
+    </template>
+  </span>
 </template>
 
 <style scoped>
@@ -75,31 +88,31 @@ const ASPECT_RATIO = width / height
   width: 100%;
 }
 
-.horse-figure::before,
-.horse-figure--silks::after {
-  content: '';
+.horse-figure__layer {
   position: absolute;
   inset: 0;
+  mask-image: var(--sprite);
   mask-repeat: no-repeat;
   mask-size: calc(var(--frames) * 100%) 100%;
   mask-position: calc(var(--frame) / (var(--frames) - 1) * 100%) 0;
 }
 
-.horse-figure::before {
+.horse-figure__horse {
   background: currentColor;
-  mask-image: var(--horse-sprite);
 }
 
-.horse-figure--silks::after {
+.horse-figure__breeches {
+  background: var(--color-breeches);
+}
+
+.horse-figure__silks {
   background: var(--jockey-color);
-  mask-image: var(--jockey-sprite);
   /* A hairline halo keeps dark silks readable against a dark horse. */
   filter: drop-shadow(0 0 1px rgb(255 255 255 / 0.95))
     drop-shadow(0 0 0.5px rgb(255 255 255 / 0.95));
 }
 
-.horse-figure--galloping::before,
-.horse-figure--galloping::after {
+.horse-figure--galloping .horse-figure__layer {
   animation: gallop var(--duration-gallop) steps(var(--frames), jump-none) infinite;
   animation-delay: calc(var(--phase) * -61ms);
 }
@@ -114,8 +127,7 @@ const ASPECT_RATIO = width / height
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .horse-figure--galloping::before,
-  .horse-figure--galloping::after {
+  .horse-figure--galloping .horse-figure__layer {
     animation: none;
   }
 }

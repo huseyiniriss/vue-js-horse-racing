@@ -70,13 +70,18 @@ const accessibleName = computed(() =>
   border-top: var(--border-width) solid var(--color-lane-line);
 }
 
-/* Starting stall: the number plate stays, the front gate swings away on the start. */
+/* Starting stall: brushed aluminium, a fixed number plate, a gate that drops on the start. */
 .track-lane__stall {
   position: relative;
   display: grid;
   place-items: center;
-  background: var(--color-stall);
-  border-right: 2px solid var(--color-stall-frame);
+  background: linear-gradient(
+    to right,
+    var(--color-stall) 0%,
+    var(--color-stall-light) 40%,
+    var(--color-stall-shade) 100%
+  );
+  border-right: var(--border-width) solid var(--color-stall-frame);
 }
 
 .track-lane__number {
@@ -84,24 +89,24 @@ const accessibleName = computed(() =>
   place-items: center;
   min-width: 1.375rem;
   height: 1.375rem;
-  border-radius: 2px;
-  background: var(--color-gate);
-  color: var(--color-ink);
+  border-radius: 3px;
+  background: var(--color-plate);
+  color: var(--color-ink-inverse);
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
   line-height: 1;
 }
 
 .track-lane__gate {
   position: absolute;
-  top: 2px;
-  bottom: 2px;
-  right: -4px;
-  width: 6px;
+  top: 3px;
+  bottom: 3px;
+  right: -3px;
+  width: 4px;
   border-radius: 1px;
   background: repeating-linear-gradient(
     to bottom,
-    var(--color-gate) 0 3px,
+    var(--color-stall-light) 0 3px,
     var(--color-stall-frame) 3px 5px
   );
   transform-origin: top;
