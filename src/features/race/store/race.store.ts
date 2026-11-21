@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref, shallowRef } from 'vue'
+import { computed, readonly, ref, shallowRef } from 'vue'
 
 import { useHorsesStore, type HorseId } from '@/features/horses'
 import { createRandom, deriveSeed } from '@/shared/lib/random'
@@ -29,34 +29,48 @@ export interface LaneState {
 /** The one action the Start/Pause button performs in the current status, if any. */
 export type PlaybackAction = Extract<RaceEvent, 'start' | 'pause' | 'resume'>
 
+export interface RaceConfig {
+  readonly seed: number
+  /** Program number the next Generate draws (1-based). Lets a URL replay any program. */
+  readonly firstProgram?: number
+  readonly rules?: RaceRules
+  readonly timing?: RaceTiming
+}
+
 export const useRaceStore = defineStore('race', () => {
   const horses = useHorsesStore()
 
-  // Configuration (set once at bootstrap, overridable in tests).
+  // Configuration: set at bootstrap, only while nothing has been generated.
   const seed = ref(0)
   const rules = shallowRef<RaceRules>(RACE_RULES)
   const timing = shallowRef<RaceTiming>(RACE_TIMING)
 
-  // State. Large immutable structures use shallowRef: they are replaced, never mutated.
+  // State. Immutable structures use shallowRef: they are replaced, never mutated.
   const status = ref<RaceStatus>('idle')
+  /** Number of the program on screen (0 before the first Generate). */
   const programNumber = ref(0)
   const schedule = shallowRef<Schedule>([])
   const currentRoundIndex = ref(0)
+  /** The engine's decision for the round being run. Internal: the UI reads `lanes`. */
   const simulation = shallowRef<RoundSimulation | null>(null)
-  /** Race seconds since the current round started. The only value that changes every frame. */
+  /** Race seconds since the current round started: the only value that changes per frame. */
   const elapsed = ref(0)
   const results = shallowRef<readonly RoundResult[]>([])
 
   // Getters
   const currentRound = computed<Round | null>(() => schedule.value[currentRoundIndex.value] ?? null)
-  const canGenerate = computed(() => canTransition(status.value, 'generate'))
   const roundCount = computed(() => rules.value.roundDistances.length)
   const laneCount = computed(() => rules.value.horsesPerRound)
+  const canGenerate = computed(() => canTransition(status.value, 'generate'))
 
   const playbackAction = computed<PlaybackAction | null>(() => {
     const actions: PlaybackAction[] = ['start', 'pause', 'resume']
     return actions.find((action) => canTransition(status.value, action)) ?? null
   })
+
+  const isCurrentRoundSettled = computed(
+    () => results.value.at(-1)?.roundIndex === currentRoundIndex.value,
+  )
 
   /** Final order of the current round. Computed once per round, not per frame. */
   const positionsByHorse = computed(() => {
@@ -90,10 +104,14 @@ export const useRaceStore = defineStore('race', () => {
   })
 
   // Actions
-  function configure(options: { seed: number; rules?: RaceRules; timing?: RaceTiming }): void {
-    seed.value = options.seed
-    if (options.rules) rules.value = options.rules
-    if (options.timing) timing.value = options.timing
+  function configure(config: RaceConfig): void {
+    if (status.value !== 'idle') {
+      throw new Error('The race can only be configured before a program is generated')
+    }
+    seed.value = config.seed
+    programNumber.value = Math.max(0, (config.firstProgram ?? 1) - 1)
+    if (config.rules) rules.value = config.rules
+    if (config.timing) timing.value = config.timing
   }
 
   function generateProgram(): void {
@@ -133,19 +151,23 @@ export const useRaceStore = defineStore('race', () => {
     if (status.value !== 'running' || !sim || realSeconds <= 0) return
 
     elapsed.value += realSeconds * timing.value.playbackRate
+    if (elapsed.value < sim.duration) return
 
-    if (elapsed.value >= sim.duration && results.value.length === sim.roundIndex) {
+    // The last horse is home: the round's result is final.
+    if (!isCurrentRoundSettled.value) {
       results.value = [...results.value, rankRunners(sim)]
     }
 
+    const isLastRound = sim.roundIndex === schedule.value.length - 1
+    if (isLastRound) {
+      status.value = transition(status.value, 'complete')
+      return
+    }
+
+    // Keep the finished field on screen for the intermission, then line up the next round.
     const intermission = timing.value.intermissionSeconds * timing.value.playbackRate
     if (elapsed.value >= sim.duration + intermission) {
-      const next = sim.roundIndex + 1
-      if (next < schedule.value.length) {
-        beginRound(next)
-      } else {
-        status.value = transition(status.value, 'complete')
-      }
+      beginRound(sim.roundIndex + 1)
     }
   }
 
@@ -168,16 +190,17 @@ export const useRaceStore = defineStore('race', () => {
     )
   }
 
+  // State is exposed read-only: it changes through actions only, so the status machine
+  // cannot be bypassed from a component.
   return {
     // state
-    seed,
-    status,
-    programNumber,
-    schedule,
-    currentRoundIndex,
-    simulation,
-    elapsed,
-    results,
+    seed: readonly(seed),
+    status: readonly(status),
+    programNumber: readonly(programNumber),
+    schedule: readonly(schedule),
+    currentRoundIndex: readonly(currentRoundIndex),
+    elapsed: readonly(elapsed),
+    results: readonly(results),
     // getters
     currentRound,
     roundCount,

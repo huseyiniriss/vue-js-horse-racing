@@ -19,7 +19,11 @@ import { APP_COPY } from './copy'
 useRaceClock()
 
 const race = useRaceStore()
-const replayHref = computed(() => replayUrl(race.seed, window.location))
+// Before the first Generate the link points at the program the next Generate will draw.
+const replayHref = computed(() => {
+  const program = race.status === 'idle' ? race.programNumber + 1 : race.programNumber
+  return replayUrl({ seed: race.seed, program }, window.location)
+})
 </script>
 
 <template>

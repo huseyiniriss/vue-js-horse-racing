@@ -4,9 +4,9 @@ import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
 import App from './App.vue'
-import { bootstrapGame, resolveSeed } from './bootstrap'
+import { bootstrapGame, resolveSession } from './bootstrap'
 
 const pinia = createPinia()
-bootstrapGame(pinia, resolveSeed(window.location.search))
+bootstrapGame(pinia, resolveSession(window.location.search))
 
 createApp(App).use(pinia).mount('#app')

@@ -1,5 +1,5 @@
 import { createPinia, setActivePinia } from 'pinia'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useHorsesStore } from '@/features/horses'
 import { createRandom } from '@/shared/lib/random'
@@ -72,7 +72,7 @@ describe('race store', () => {
       expect(race.canGenerate).toBe(false)
       expect(() => {
         race.generateProgram()
-      }).toThrow()
+      }).toThrow('"generate" is not allowed while the race is "running"')
 
       race.pause()
       expect(race.canGenerate).toBe(false)
@@ -196,10 +196,50 @@ describe('race store', () => {
       ).toBe(true)
     })
 
+    it('declares the race day complete as soon as the last round is settled', () => {
+      runUntil(race, () => race.results.length === 6)
+      expect(race.status).toBe('finished')
+      expect(race.playbackAction).toBeNull()
+    })
+
     it('handles a huge frame without losing a result', () => {
       race.tick(10_000)
       expect(race.results).toHaveLength(1)
       expect(race.currentRoundIndex).toBe(1)
+    })
+  })
+
+  describe('configuration and encapsulation', () => {
+    it('can only be configured before a program is generated', () => {
+      race.generateProgram()
+      expect(() => {
+        race.configure({ seed: 1 })
+      }).toThrow('only be configured before a program is generated')
+    })
+
+    it('exposes state read-only, so the status machine cannot be bypassed', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+      const writable = race as unknown as { status: string }
+      writable.status = 'finished'
+      expect(race.status).toBe('idle')
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('target is readonly'),
+        expect.anything(),
+      )
+    })
+
+    it('replays a specific program of the day from its number', () => {
+      const original = setup(5)
+      original.generateProgram()
+      original.generateProgram()
+      original.generateProgram()
+      expect(original.programNumber).toBe(3)
+
+      const replay = setup(5)
+      replay.configure({ seed: 5, firstProgram: 3 })
+      replay.generateProgram()
+      expect(replay.programNumber).toBe(3)
+      expect(replay.schedule).toEqual(original.schedule)
     })
   })
 
