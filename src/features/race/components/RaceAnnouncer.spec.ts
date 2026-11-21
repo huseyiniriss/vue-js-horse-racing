@@ -21,6 +21,22 @@ describe('RaceAnnouncer', () => {
     expect(wrapper.attributes('aria-live')).toBe('polite')
   })
 
+  it('announces a new program, pause and resume', async () => {
+    const { wrapper, race } = mountAnnouncer()
+    race.generateProgram()
+    await nextTick()
+    expect(wrapper.text()).toBe('Program ready: 6 rounds. Press Start.')
+
+    race.start()
+    race.pause()
+    await nextTick()
+    expect(wrapper.text()).toBe('Race paused.')
+
+    race.resume()
+    await nextTick()
+    expect(wrapper.text()).toBe('Race resumed.')
+  })
+
   it('announces the start of a round', async () => {
     const { wrapper, race } = mountAnnouncer()
     race.generateProgram()
@@ -42,7 +58,8 @@ describe('RaceAnnouncer', () => {
     await nextTick()
     race.resume()
     await nextTick()
-    expect(wrapper.text()).toBe(`Round 1 finished. ${winner} wins.`)
+    // Resuming says so; it does not announce the round as if it were starting again.
+    expect(wrapper.text()).toBe('Race resumed.')
   })
 
   it('announces the winner and the end of the race day', async () => {

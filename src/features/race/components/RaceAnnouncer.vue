@@ -11,6 +11,17 @@ const race = useRaceStore()
 const horses = useHorsesStore()
 const message = ref('')
 
+watch(
+  () => race.status,
+  (status, previous) => {
+    if (status === 'ready') message.value = RACE_COPY.announceProgramReady(race.roundCount)
+    else if (status === 'paused') message.value = RACE_COPY.announcePaused
+    else if (status === 'running' && previous === 'paused') {
+      message.value = RACE_COPY.announceResumed
+    }
+  },
+)
+
 // Announce a round when it starts: on Start, and on every round change while running.
 // Resuming after a pause is not a new start.
 watch(

@@ -1,10 +1,10 @@
 import { createPinia } from 'pinia'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { useHorsesStore } from '@/features/horses'
 import { useRaceStore } from '@/features/race'
 
-import { bootstrapGame, replayUrl, resolveSession } from './bootstrap'
+import { bootstrapGame, keepSeedInUrl, replayUrl, resolveSession } from './bootstrap'
 
 const location = { origin: 'https://example.com', pathname: '/race/' }
 
@@ -48,6 +48,24 @@ describe('replayUrl', () => {
   it('round-trips through resolveSession', () => {
     const url = new URL(replayUrl({ seed: 9, program: 4 }, location))
     expect(resolveSession(url.search)).toEqual({ seed: 9, firstProgram: 4 })
+  })
+})
+
+describe('keepSeedInUrl', () => {
+  it('writes a generated seed into the address bar so a reload keeps the stable', () => {
+    const history = { replaceState: vi.fn() }
+    keepSeedInUrl({ seed: 7, firstProgram: 1 }, { ...location, search: '' }, history)
+    expect(history.replaceState).toHaveBeenCalledWith(null, '', 'https://example.com/race/?seed=7')
+  })
+
+  it('leaves a URL that already has a seed alone', () => {
+    const history = { replaceState: vi.fn() }
+    keepSeedInUrl(
+      { seed: 42, firstProgram: 3 },
+      { ...location, search: '?seed=42&program=3' },
+      history,
+    )
+    expect(history.replaceState).not.toHaveBeenCalled()
   })
 })
 

@@ -8,7 +8,7 @@ import RaceControls from './RaceControls.vue'
 
 function mountControls() {
   const pinia = setupGame()
-  const wrapper = mount(RaceControls, { global: { plugins: [pinia] } })
+  const wrapper = mount(RaceControls, { global: { plugins: [pinia] }, attachTo: document.body })
   return {
     wrapper,
     race: useRaceStore(),
@@ -23,6 +23,28 @@ describe('RaceControls', () => {
     expect(generate().attributes('disabled')).toBeUndefined()
     expect(playback().attributes('disabled')).toBeDefined()
     expect(playback().text()).toBe('Start')
+  })
+
+  it('explains why Start is unavailable before a program exists', () => {
+    const { wrapper, playback } = mountControls()
+    const hintId = playback().attributes('aria-describedby')
+    expect(hintId).toBeTruthy()
+    expect(wrapper.get(`#${CSS.escape(hintId!)}`).text()).toBe('Generate a program first.')
+  })
+
+  it('moves focus from Pause to Generate when the race day ends', async () => {
+    const { wrapper, race, generate, playback } = mountControls()
+    await generate().trigger('click')
+    await playback().trigger('click')
+    ;(playback().element as HTMLButtonElement).focus()
+
+    for (let round = 0; round < 6; round++) race.tick(10_000)
+    await wrapper.vm.$nextTick()
+    await wrapper.vm.$nextTick()
+
+    expect(race.status).toBe('finished')
+    expect(document.activeElement).toBe(generate().element)
+    wrapper.unmount()
   })
 
   it('generates a program and starts the race', async () => {

@@ -132,7 +132,7 @@ const print = computed(() => {
  * only color. Horses are placed from the finish line (right) by their time gap.
  */
 .photo-finish__print {
-  --print-height: 11rem;
+  --print-height: 6.5rem;
   --horse-width: 3.75rem;
   --finish-line-width: 2px;
   --grid-step: 2.5rem;
@@ -212,6 +212,18 @@ const print = computed(() => {
   color: var(--color-ink-muted);
   font-size: var(--font-size-sm);
   text-align: center;
+}
+
+@media (min-width: 48rem) {
+  .photo-finish__print {
+    --print-height: 8.5rem;
+  }
+}
+
+@media (min-width: 80rem) and (max-height: 56rem) {
+  .photo-finish__print {
+    --print-height: 6.5rem;
+  }
 }
 
 /* The print develops from the finish line outwards, like the camera's scan. */

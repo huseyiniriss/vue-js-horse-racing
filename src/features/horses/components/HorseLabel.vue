@@ -8,7 +8,7 @@ defineProps<{ horse: Horse }>()
 <template>
   <span class="horse-label">
     <SilksIcon :silks="horse.silks" />
-    <span class="horse-label__name">{{ horse.name }}</span>
+    <span class="horse-label__name" :title="horse.name">{{ horse.name }}</span>
   </span>
 </template>
 

@@ -43,6 +43,19 @@ export function replayUrl(
   return url.toString()
 }
 
+/**
+ * Writes a freshly generated seed into the address bar (without a navigation), so a
+ * reload keeps the same stable instead of drawing a new one.
+ */
+export function keepSeedInUrl(
+  session: Session,
+  location: Pick<Location, 'origin' | 'pathname' | 'search'>,
+  history: Pick<History, 'replaceState'>,
+): void {
+  if (new URLSearchParams(location.search).has(SEED_PARAM)) return
+  history.replaceState(null, '', replayUrl({ seed: session.seed, program: 1 }, location))
+}
+
 /** Creates the session: one seed drives the stable and every program that follows. */
 export function bootstrapGame(pinia: Pinia, session: Session): void {
   useHorsesStore(pinia).populate(createRandom(deriveSeed(session.seed, 'horses')))

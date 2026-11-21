@@ -64,6 +64,13 @@ const replayHref = computed(() => {
 }
 
 .app-shell__header {
+  /* On phones the controls stay reachable while scrolling to the results. */
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: calc(var(--space-4) * -1) calc(var(--space-4) * -1) 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-paper);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -131,6 +138,12 @@ const replayHref = computed(() => {
 @media (min-width: 48rem) {
   .app-shell {
     padding: var(--space-5);
+  }
+
+  .app-shell__header {
+    position: static;
+    margin: 0;
+    padding: 0;
   }
 
   .app-shell__main {

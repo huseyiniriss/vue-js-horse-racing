@@ -94,6 +94,9 @@ const signs = computed(() => {
 
       <span class="race-track__finish-line" aria-hidden="true" />
       <p v-if="race.status === 'idle'" class="race-track__empty">{{ RACE_COPY.trackIdle }}</p>
+      <p v-else-if="race.status === 'finished'" class="race-track__empty race-track__empty--done">
+        {{ RACE_COPY.trackFinished }}
+      </p>
     </div>
 
     <PhotoFinish />
@@ -311,5 +314,10 @@ const signs = computed(() => {
   font-weight: var(--font-weight-semibold);
   text-align: center;
   text-shadow: var(--shadow-text-on-turf);
+}
+
+/* Over the finished field: a scrim keeps the message readable on top of the horses. */
+.race-track__empty--done {
+  background: var(--color-turf-scrim);
 }
 </style>

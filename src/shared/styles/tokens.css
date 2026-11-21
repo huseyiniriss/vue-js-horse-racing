@@ -44,6 +44,7 @@
   --color-finish-edge: rgb(0 0 0 / 0.12);
   --color-silks-outline: rgb(0 0 0 / 0.38);
   --shadow-text-on-turf: 0 1px 2px rgb(0 0 0 / 0.35);
+  --color-turf-scrim: rgb(20 50 28 / 0.55);
   /* Fine grass grain over the mowing bands (tiny inline SVG noise). */
   --turf-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.22 0 0 0 0 0.08 0 0 0 0.38 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
 
@@ -109,7 +110,7 @@
   /* Layout */
   --layout-max-width: 1600px;
   --panel-width: 15.5rem;
-  --lane-height: 2.5rem;
+  --lane-height: 2.25rem;
   --runner-width: 3.75rem;
   --gate-width: 2.25rem;
   /* Clearances: horses start clear of the stall gate and finish on the winning line. */
@@ -135,6 +136,14 @@
   :root {
     --lane-height: 3rem;
     --runner-width: 4.5rem;
+  }
+}
+
+/* Short desktop screens (e.g. 1280×800): tighter lanes so the race day fits without scrolling. */
+@media (min-width: 80rem) and (max-height: 56rem) {
+  :root {
+    --lane-height: 2.5rem;
+    --runner-width: 3.75rem;
   }
 }
 

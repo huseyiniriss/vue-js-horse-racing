@@ -7,9 +7,11 @@ export const RACE_COPY = {
   pause: 'Pause',
   resume: 'Resume',
   generateLocked: 'A new program can be generated when the current race day ends.',
+  startLocked: 'Generate a program first.',
 
   trackTitle: 'Race track',
   trackIdle: 'Generate a program to line up the first field.',
+  trackFinished: 'Race day complete. Generate a new program to race again.',
   roundOf: (round: number, total: number) => `Round ${round} of ${total}`,
   distance: (metres: number) => formatDistance(metres),
   lane: (lane: number) => `Lane ${lane}`,
@@ -37,6 +39,9 @@ export const RACE_COPY = {
     `Round ${round} is off, ${formatDistance(metres)}.`,
   announceWinner: (round: number, winner: string) => `Round ${round} finished. ${winner} wins.`,
   announceDayComplete: 'All rounds are finished.',
+  announceProgramReady: (rounds: number) => `Program ready: ${rounds} rounds. Press Start.`,
+  announcePaused: 'Race paused.',
+  announceResumed: 'Race resumed.',
 
   photoTitle: (round: number) => `Photo finish, round ${round}`,
   photoVerdict: (winner: string, margin: string) => `${winner} wins by ${margin} s`,
