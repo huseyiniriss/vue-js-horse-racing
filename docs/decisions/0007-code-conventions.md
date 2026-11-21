@@ -46,8 +46,11 @@ enforced by tooling. `npm run check` runs all of it; CI fails on any warning.
 - `<script setup lang="ts">` only; block order `script → template → style`.
 - Typed `defineProps<…>()` / `defineEmits<…>()`; props down, events up.
 - Stable `:key`s (ids, never array indexes for reorderable lists).
-- Styles are scoped and use design tokens (`shared/styles/tokens.css`): no raw colors,
-  sizes or durations in components.
+- Styles are scoped. Colors, typography, spacing, radii, motion and any size shared
+  between components come from design tokens (`shared/styles/tokens.css`). Geometry that
+  belongs to one component only is declared once, as named custom properties at the top
+  of that component's root rule. Media-query breakpoints are the one exception (custom
+  properties cannot be used there).
 - User-facing text lives in each feature's `copy.ts`, so wording changes (or i18n) touch
   one file per feature.
 

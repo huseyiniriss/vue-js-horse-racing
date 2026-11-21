@@ -23,6 +23,12 @@ including mid-race and between rounds.
   Start/Pause button is derived from the same table, so buttons cannot drift from the rules.
 - **Generate is not allowed while a race is running or paused.** It would silently
   destroy a race in progress; the button is disabled with an explanation instead.
+- **State is exposed read-only** (`readonly()` refs): components can read everything but
+  change nothing except through actions, so the status machine cannot be bypassed.
+  `configure()` is only allowed before the first Generate.
+- **Rounds settle explicitly:** a round is settled when its result is recorded. The race
+  day completes as soon as the last round settles; earlier rounds keep the finished field
+  on screen for a short intermission first.
 - Immutable, replace-only structures (`schedule`, `results`, the round simulation) use
   `shallowRef`, so Vue does not deep-proxy data that never mutates.
 
@@ -30,8 +36,8 @@ including mid-race and between rounds.
 
 - Illegal sequences (start before generate, generate mid-race) are impossible rather
   than merely unlikely, and the full status × event matrix is unit tested.
-- Store state is writable from outside in principle (a Pinia trade-off); by convention
-  components call actions only and never assign state.
+- The engine's per-round simulation stays private to the store; the UI reads derived
+  `lanes` (progress, finished, position) instead.
 
 ## Alternatives considered
 

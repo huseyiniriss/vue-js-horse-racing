@@ -11,8 +11,9 @@ driving movement with `setInterval` and `left`, wastes work and stutters.
 
 - `useRaceClock` subscribes a `Ticker` while the status is `running` and calls
   `race.tick(deltaSeconds)`. The default ticker uses `requestAnimationFrame`.
-- `tick` advances a single number, `elapsed` (race seconds). Lane positions are a
-  computed value derived from it.
+- `tick` advances a single piece of state, `elapsed` (race seconds). Lane positions are
+  derived from it in one computed (ten small objects per frame); each runner receives
+  its progress as one CSS custom property.
 - Horses are moved with `transform: translateX()`, which the browser composites
   without layout.
 - The ticker caps a frame's delta (0.1 s). Background tabs pause animation frames; when
@@ -25,6 +26,7 @@ driving movement with `setInterval` and `left`, wastes work and stutters.
 
 ## Consequences
 
-- One reactive write per frame; rendering cost is ten transforms.
+- One state write per frame; the DOM work per frame is one style property per runner,
+  which the browser turns into a composited transform.
 - The clock is owned by the app shell, not by the track component, so swapping or
   hiding the track view never stops the race.

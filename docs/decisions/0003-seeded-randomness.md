@@ -17,9 +17,11 @@ the round cannot be replayed.
   horses, program #n, round #i of program #n. Adding a random call in one place never
   shifts the numbers somewhere else.
 - The session seed comes from `?seed=<number>` or is generated, and is shown in the footer.
+  Programs are numbered within a session, so the footer's replay link carries both:
+  `?seed=42&program=3` replays exactly the program on screen.
 
 ## Consequences
 
-- Any race day can be replayed by URL; tests and screenshots are deterministic.
+- Any program of any session can be replayed by URL; tests and screenshots are deterministic.
 - Unit tests assert real outcomes for fixed seeds instead of mocking randomness.
 - mulberry32 is not cryptographically secure, which is irrelevant here.

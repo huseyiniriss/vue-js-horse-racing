@@ -1,5 +1,7 @@
 # Architecture decisions
 
+See also the [design system](../design-system.md).
+
 Short records of the decisions that shape this codebase: the context, the choice,
 and what it costs. New decisions get the next number; superseded ones stay, marked as such.
 
@@ -12,3 +14,4 @@ and what it costs. New decisions get the next number; superseded ones stay, mark
 | [0005](0005-animation-clock.md)         | One clock, one reactive value per frame              |
 | [0006](0006-testing-strategy.md)        | Testing strategy                                     |
 | [0007](0007-code-conventions.md)        | Code conventions                                     |
+| [0008](0008-horses-and-silks.md)        | Horses from Muybridge's gallop, identified by silks  |
