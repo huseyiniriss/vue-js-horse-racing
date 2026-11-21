@@ -3,7 +3,7 @@ import pluginVue from 'eslint-plugin-vue'
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
 
 /**
- * Architecture boundaries (see docs/decisions/0002-feature-based-structure.md):
+ * Architecture boundaries (see docs/decisions/0001-feature-based-structure.md):
  * - shared/ is a leaf: it never knows about features or the app shell.
  * - a feature talks to another feature only through its public index.
  * - domain/ is framework-free TypeScript.
