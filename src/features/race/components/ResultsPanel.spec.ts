@@ -14,7 +14,7 @@ describe('ResultsPanel', () => {
     expect(wrapper.text()).toContain('Results appear here as each round finishes.')
   })
 
-  it('lists each finished round with positions, horses and times', async () => {
+  it('lists each finished round racecard style: winner time, then gaps', async () => {
     const pinia = setupGame()
     const race = useRaceStore()
     const horses = useHorsesStore()
@@ -29,7 +29,8 @@ describe('ResultsPanel', () => {
 
     const rounds = wrapper.findAll('[data-testid="result-round"]')
     expect(rounds).toHaveLength(1)
-    expect(rounds[0]!.find('caption').text()).toBe('Round 1, 1,200 m')
+    expect(rounds[0]!.get('h3').text()).toContain('Round 1')
+    expect(rounds[0]!.get('h3').text()).toContain('1,200 m')
 
     const rows = rounds[0]!.findAll('tbody tr')
     expect(rows).toHaveLength(10)
@@ -37,5 +38,6 @@ describe('ResultsPanel', () => {
     expect(rows[0]!.text()).toContain('1')
     expect(rows[0]!.text()).toContain(horses.getHorse(winner.horseId).name)
     expect(rows[0]!.text()).toMatch(/\d:\d{2}\.\d{2}/)
+    expect(rows[1]!.text()).toMatch(/\+\d+\.\d{2}/)
   })
 })

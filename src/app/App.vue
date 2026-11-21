@@ -67,7 +67,7 @@ const replayHref = computed(() => replayUrl(race.seed, window.location))
 
 .app-shell__title {
   font-size: var(--font-size-2xl);
-  font-stretch: var(--font-stretch-condensed);
+  letter-spacing: var(--letter-spacing-tight);
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
 }

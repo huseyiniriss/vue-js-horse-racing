@@ -5,14 +5,19 @@ import { useHorsesStore } from '@/features/horses'
 
 import { RACE_COPY } from '../copy'
 import { useRaceStore } from '../store/race.store'
+import PhotoFinish from './PhotoFinish.vue'
 import TrackLane from './TrackLane.vue'
 
-const MARKER_INTERVAL_METRES = 200
+/** Distance signs along the rail, as on a real course. */
+const SIGN_INTERVAL_METRES = 400
+/** Signs this close to the winning post would collide with its label. */
+const MIN_GAP_TO_FINISH = 0.22
 
 const race = useRaceStore()
 const horses = useHorsesStore()
 
 const isRunning = computed(() => race.status === 'running')
+const isGateOpen = computed(() => race.elapsed > 0)
 
 /** Always draw the full field, so the track keeps its shape before a program exists. */
 const laneRows = computed(() =>
@@ -26,15 +31,15 @@ const laneRows = computed(() =>
   }),
 )
 
-/** Distance poles every 200 m, positioned in the same coordinate space as the horses' noses. */
-const markers = computed(() => {
+/** Distance signs on the rail, in the same coordinate space as the horses' noses. */
+const signs = computed(() => {
   const distance = race.currentRound?.distance
   if (!distance) return []
-  const count = Math.floor((distance - 1) / MARKER_INTERVAL_METRES)
+  const count = Math.floor(distance / SIGN_INTERVAL_METRES)
   return Array.from({ length: count }, (_, index) => {
-    const metres = (index + 1) * MARKER_INTERVAL_METRES
-    return { metres, fraction: metres / distance }
-  })
+    const metres = (index + 1) * SIGN_INTERVAL_METRES
+    return { metres, fraction: metres / distance, label: RACE_COPY.distance(metres) }
+  }).filter((sign) => 1 - sign.fraction >= MIN_GAP_TO_FINISH)
 })
 </script>
 
@@ -60,6 +65,20 @@ const markers = computed(() => {
     </header>
 
     <div class="race-track__field">
+      <div class="race-track__rail" aria-hidden="true">
+        <span
+          v-for="sign in signs"
+          :key="sign.metres"
+          class="race-track__sign"
+          :style="{ '--fraction': sign.fraction }"
+        >
+          {{ sign.label }}
+        </span>
+        <span class="race-track__winning-post">
+          <span class="race-track__winning-label">{{ RACE_COPY.finish }}</span>
+        </span>
+      </div>
+
       <ol class="race-track__lanes">
         <TrackLane
           v-for="row in laneRows"
@@ -68,25 +87,15 @@ const markers = computed(() => {
           :state="row.state"
           :horse="row.horse"
           :is-running="isRunning"
+          :is-gate-open="isGateOpen"
         />
       </ol>
 
-      <div class="race-track__overlay" aria-hidden="true">
-        <span
-          v-for="marker in markers"
-          :key="marker.metres"
-          class="race-track__marker"
-          :style="{ '--fraction': marker.fraction }"
-        >
-          <span class="race-track__marker-label">{{ marker.metres }}</span>
-        </span>
-        <span class="race-track__finish">
-          <span class="race-track__marker-label">{{ RACE_COPY.finish }}</span>
-        </span>
-      </div>
-
+      <span class="race-track__finish-line" aria-hidden="true" />
       <p v-if="race.status === 'idle'" class="race-track__empty">{{ RACE_COPY.trackIdle }}</p>
     </div>
+
+    <PhotoFinish />
   </section>
 </template>
 
@@ -97,7 +106,8 @@ const markers = computed(() => {
   min-width: 0;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-line);
-  border-radius: var(--radius-md);
+  border-top: 3px solid var(--color-ink);
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
@@ -107,7 +117,6 @@ const markers = computed(() => {
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border-bottom: var(--border-width) solid var(--color-line);
 }
 
 .race-track__round {
@@ -118,15 +127,15 @@ const markers = computed(() => {
 
 .race-track__title {
   font-size: var(--font-size-xl);
-  font-stretch: var(--font-stretch-condensed);
   font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-display);
   line-height: var(--line-height-tight);
 }
 
 .race-track__distance {
   color: var(--color-ink-muted);
   font-size: var(--font-size-lg);
-  font-stretch: var(--font-stretch-condensed);
+  font-weight: var(--font-weight-medium);
 }
 
 .race-track__status {
@@ -136,7 +145,7 @@ const markers = computed(() => {
   background: var(--color-surface-sunken);
   color: var(--color-ink-muted);
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
 }
 
 .race-track__status--running {
@@ -150,69 +159,119 @@ const markers = computed(() => {
 }
 
 .race-track__field {
+  --rail-height: 2.25rem;
+
   position: relative;
-  padding-top: var(--space-5);
-  background: var(--color-turf);
-  border-bottom: 4px solid var(--color-rail);
+  /* Mowing bands run across the course, like on a real turf track. */
+  background:
+    var(--turf-grain),
+    repeating-linear-gradient(
+      to right,
+      var(--color-turf) 0 4.5rem,
+      var(--color-turf-stripe) 4.5rem 9rem
+    );
+  border-bottom: 3px solid var(--color-rail);
+}
+
+/* The inside running rail: a white rail on short posts, signs and the winning post on it. */
+.race-track__rail {
+  position: relative;
+  height: var(--rail-height);
+  margin-left: var(--gate-width);
+  background:
+    linear-gradient(
+      to bottom,
+      transparent calc(100% - 9px),
+      var(--color-rail) calc(100% - 9px) calc(100% - 5px),
+      transparent calc(100% - 5px)
+    ),
+    repeating-linear-gradient(
+        to right,
+        transparent 0 calc(1.5rem - 2px),
+        var(--color-rail) calc(1.5rem - 2px) 1.5rem
+      )
+      bottom / 100% 9px no-repeat;
+  container-type: inline-size;
+}
+
+.race-track__sign {
+  position: absolute;
+  bottom: 9px;
+  left: calc(var(--runner-width) + (100% - var(--runner-width)) * var(--fraction));
+  padding: 1px var(--space-1);
+  border-radius: 2px;
+  background: var(--color-sign);
+  color: var(--color-ink);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  box-shadow: 0 1px 0 var(--color-stall-frame);
+}
+
+.race-track__winning-post {
+  position: absolute;
+  bottom: 5px;
+  right: 0;
+  width: 3px;
+  height: calc(var(--rail-height) - 12px);
+  background: var(--color-rail);
+}
+
+/* The red disc on top of the winning post, kept inside the track's edge. */
+.race-track__winning-post::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 2px solid var(--color-rail);
+  border-radius: 50%;
+  background: var(--color-pole);
+}
+
+.race-track__winning-label {
+  position: absolute;
+  top: 0;
+  right: calc(100% + var(--space-4));
+  color: var(--color-ink-inverse);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+@container (max-width: 24rem) {
+  .race-track__sign:nth-of-type(even) {
+    display: none;
+  }
 }
 
 .race-track__lanes {
-  border-top: 4px solid var(--color-rail);
+  border-top: 2px solid var(--color-rail);
 }
 
-/* Covers the courses only (not the gates), in the horses' nose coordinate space. */
-.race-track__overlay {
+/* The finish line across all lanes, under the winning post. */
+.race-track__finish-line {
   position: absolute;
-  inset: 0 0 0 var(--gate-width);
-  pointer-events: none;
-}
-
-.race-track__marker,
-.race-track__finish {
-  position: absolute;
-  top: 0;
+  top: var(--rail-height);
   bottom: 0;
-}
-
-.race-track__marker {
-  left: calc(var(--runner-size) + (100% - var(--runner-size)) * var(--fraction));
-  border-left: var(--border-width) dashed var(--color-marker);
-}
-
-.race-track__finish {
   right: 0;
-  width: 0.5rem;
-  background: repeating-conic-gradient(var(--color-rail) 0 25%, var(--color-ink) 0 50%) 0 0 / 0.5rem
-    0.5rem;
-}
-
-.race-track__marker-label {
-  position: absolute;
-  top: var(--space-1);
-  left: 0;
-  color: var(--color-ink-inverse);
-  font-size: var(--font-size-xs);
-  font-stretch: var(--font-stretch-condensed);
-  line-height: 1;
-  transform: translateX(-50%);
-}
-
-.race-track__finish .race-track__marker-label {
-  left: auto;
-  right: 0;
-  transform: none;
-  font-weight: var(--font-weight-bold);
+  width: 3px;
+  background: var(--color-rail);
+  pointer-events: none;
 }
 
 .race-track__empty {
   position: absolute;
-  inset: var(--space-5) 0 0 var(--gate-width);
+  inset: var(--rail-height) 0 0 var(--gate-width);
   display: grid;
   place-items: center;
   padding: var(--space-4);
   color: var(--color-ink-inverse);
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   text-align: center;
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
 }

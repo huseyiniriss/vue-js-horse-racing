@@ -15,7 +15,8 @@ const horses = useHorsesStore()
 const rounds = computed(() =>
   race.schedule.map((round) => ({
     index: round.index,
-    heading: RACE_COPY.roundHeading(round.index + 1, round.distance),
+    title: RACE_COPY.roundTitle(round.index + 1),
+    subtitle: RACE_COPY.distance(round.distance),
     rows: round.lanes.map((horseId, laneIndex): RoundTableRow => ({
       key: horseId,
       lead: laneIndex + 1,
@@ -43,7 +44,9 @@ const { setItemRef } = useScrollIntoView(highlightedRound)
         data-testid="program-round"
       >
         <RoundTable
-          :heading="round.heading"
+          :title="round.title"
+          :subtitle="round.subtitle"
+          lead-kind="cloth"
           :lead-label="RACE_COPY.columnLane"
           :horse-label="RACE_COPY.columnHorse"
           :rows="round.rows"

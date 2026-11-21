@@ -3,5 +3,5 @@ export const APP_COPY = {
   title: 'Horse Racing',
   seedLabel: 'Seed',
   replayLink: 'Replay this race day',
-  credits: 'Horse silhouette: Font Awesome Free (CC BY 4.0)',
+  credits: 'Horses after Eadweard Muybridge, The Horse in Motion (1878)',
 } as const

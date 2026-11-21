@@ -12,6 +12,8 @@ const props = defineProps<{
   state: LaneState | null
   horse: Horse | null
   isRunning: boolean
+  /** Stall gates open once the round has started. */
+  isGateOpen: boolean
 }>()
 
 const isGalloping = computed(() => props.isRunning && props.state !== null && !props.state.finished)
@@ -22,17 +24,28 @@ const accessibleName = computed(() =>
 
 <template>
   <li class="track-lane" :data-testid="`lane-${lane}`" :aria-label="accessibleName">
-    <span class="track-lane__gate" aria-hidden="true">{{ lane }}</span>
+    <span
+      class="track-lane__stall"
+      :class="{ 'track-lane__stall--open': isGateOpen }"
+      aria-hidden="true"
+    >
+      <span class="track-lane__number">{{ lane }}</span>
+      <span class="track-lane__gate" />
+    </span>
     <div class="track-lane__course">
       <div
         v-if="state && horse"
         class="track-lane__runner"
-        :class="{ 'track-lane__runner--galloping': isGalloping }"
         :style="{ '--progress': state.progress }"
         data-testid="runner"
         :data-progress="state.progress.toFixed(3)"
       >
-        <HorseFigure class="track-lane__horse" :color="horse.color.hex" :number="lane" />
+        <HorseFigure
+          class="track-lane__horse"
+          :jockey="horse.silks.body"
+          :galloping="isGalloping"
+          :phase="lane"
+        />
         <span
           v-if="state.position !== null"
           class="track-lane__position"
@@ -47,28 +60,56 @@ const accessibleName = computed(() =>
 
 <style scoped>
 .track-lane {
+  position: relative;
   display: grid;
   grid-template-columns: var(--gate-width) 1fr;
   height: var(--lane-height);
-  background: var(--color-turf);
-}
-
-.track-lane:nth-child(even) {
-  background: var(--color-turf-stripe);
 }
 
 .track-lane + .track-lane {
-  border-top: var(--border-width) dashed var(--color-lane-line);
+  border-top: var(--border-width) solid var(--color-lane-line);
+}
+
+/* Starting stall: the number plate stays, the front gate swings away on the start. */
+.track-lane__stall {
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: var(--color-stall);
+  border-right: 2px solid var(--color-stall-frame);
+}
+
+.track-lane__number {
+  display: grid;
+  place-items: center;
+  min-width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 2px;
+  background: var(--color-gate);
+  color: var(--color-ink);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
 }
 
 .track-lane__gate {
-  display: grid;
-  place-items: center;
-  border-right: 3px solid var(--color-rail);
-  color: var(--color-ink-inverse);
-  font-size: var(--font-size-sm);
-  font-stretch: var(--font-stretch-condensed);
-  font-weight: var(--font-weight-bold);
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  right: -4px;
+  width: 6px;
+  border-radius: 1px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--color-gate) 0 3px,
+    var(--color-stall-frame) 3px 5px
+  );
+  transform-origin: top;
+  transition: transform var(--duration-gate) var(--ease-out);
+}
+
+.track-lane__stall--open .track-lane__gate {
+  transform: scaleY(0);
 }
 
 .track-lane__course {
@@ -78,20 +119,29 @@ const accessibleName = computed(() =>
 
 .track-lane__runner {
   position: absolute;
-  top: 50%;
+  bottom: 4%;
   left: 0;
-  width: var(--runner-size);
+  width: var(--runner-width);
   /* The horse's nose touches the finish line at progress 1. */
-  transform: translate(calc(var(--progress) * (100cqi - var(--runner-size))), -50%);
+  transform: translateX(calc(var(--progress) * (100cqi - var(--runner-width))));
   will-change: transform;
 }
 
-.track-lane__horse {
-  transform-origin: 50% 90%;
+/* Shadow on the turf under the horse. */
+.track-lane__runner::before {
+  content: '';
+  position: absolute;
+  left: 18%;
+  right: 12%;
+  bottom: -2px;
+  height: 18%;
+  border-radius: 50%;
+  background: var(--color-horse-shadow);
+  filter: blur(2px);
 }
 
-.track-lane__runner--galloping .track-lane__horse {
-  animation: gallop var(--duration-gallop) var(--ease-in-out) infinite;
+.track-lane__horse {
+  color: var(--color-horse);
 }
 
 .track-lane__position {
@@ -103,7 +153,6 @@ const accessibleName = computed(() =>
   background: var(--color-surface);
   color: var(--color-ink);
   font-size: var(--font-size-xs);
-  font-stretch: var(--font-stretch-condensed);
   font-weight: var(--font-weight-bold);
   transform: translateY(-50%);
   animation: pop-in var(--duration-base) var(--ease-out);
@@ -111,27 +160,14 @@ const accessibleName = computed(() =>
 
 .track-lane__position--1 {
   background: var(--color-gold);
-  color: var(--color-ink-inverse);
 }
 
 .track-lane__position--2 {
   background: var(--color-silver);
-  color: var(--color-ink-inverse);
 }
 
 .track-lane__position--3 {
   background: var(--color-bronze);
-  color: var(--color-ink-inverse);
-}
-
-@keyframes gallop {
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-8%) rotate(-3deg);
-  }
 }
 
 @keyframes pop-in {
@@ -142,7 +178,6 @@ const accessibleName = computed(() =>
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .track-lane__runner--galloping .track-lane__horse,
   .track-lane__position {
     animation: none;
   }

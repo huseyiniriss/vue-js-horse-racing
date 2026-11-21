@@ -2,29 +2,37 @@
 import { computed } from 'vue'
 
 import { useHorsesStore } from '@/features/horses'
-import { formatRaceTime } from '@/shared/lib/format'
+import { useScrollIntoView } from '@/shared/composables/useScrollIntoView'
+import { formatGap, formatRaceTime } from '@/shared/lib/format'
 import PanelSection from '@/shared/ui/PanelSection.vue'
 
 import { RACE_COPY } from '../copy'
 import { useRaceStore } from '../store/race.store'
 import RoundTable, { type RoundTableRow } from './RoundTable.vue'
-import { useScrollIntoView } from '@/shared/composables/useScrollIntoView'
 
 const race = useRaceStore()
 const horses = useHorsesStore()
 
 const results = computed(() =>
-  race.results.map((result) => ({
-    index: result.roundIndex,
-    heading: RACE_COPY.roundHeading(result.roundIndex + 1, result.distance),
-    rows: result.placings.map((placing): RoundTableRow => ({
-      key: placing.horseId,
-      lead: placing.position,
-      horse: horses.getHorse(placing.horseId),
-      trailing: formatRaceTime(placing.finishTime),
-      podium: placing.position <= 3 ? (placing.position as 1 | 2 | 3) : undefined,
-    })),
-  })),
+  race.results.map((result) => {
+    const winnerTime = result.placings[0]?.finishTime ?? 0
+    return {
+      index: result.roundIndex,
+      title: RACE_COPY.roundTitle(result.roundIndex + 1),
+      subtitle: RACE_COPY.distance(result.distance),
+      // Racecard style: the winner's time, then the gap for everyone behind.
+      rows: result.placings.map((placing): RoundTableRow => ({
+        key: placing.horseId,
+        lead: placing.position,
+        horse: horses.getHorse(placing.horseId),
+        trailing:
+          placing.position === 1
+            ? formatRaceTime(placing.finishTime)
+            : formatGap(placing.finishTime - winnerTime),
+        podium: placing.position <= 3 ? (placing.position as 1 | 2 | 3) : undefined,
+      })),
+    }
+  }),
 )
 
 const latestResult = computed(() => results.value.at(-1)?.index ?? null)
@@ -48,7 +56,9 @@ const { setItemRef } = useScrollIntoView(latestResult)
         data-testid="result-round"
       >
         <RoundTable
-          :heading="result.heading"
+          :title="result.title"
+          :subtitle="result.subtitle"
+          lead-kind="position"
           :lead-label="RACE_COPY.columnPosition"
           :horse-label="RACE_COPY.columnHorse"
           :trailing-label="RACE_COPY.columnTime"

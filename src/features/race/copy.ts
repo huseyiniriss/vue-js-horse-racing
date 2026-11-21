@@ -26,14 +26,19 @@ export const RACE_COPY = {
   programEmpty: 'Generate a program to draw six rounds of ten horses.',
   resultsTitle: 'Results',
   resultsEmpty: 'Results appear here as each round finishes.',
-  roundHeading: (round: number, metres: number) => `Round ${round}, ${formatDistance(metres)}`,
+  roundTitle: (round: number) => `Round ${round}`,
   columnLane: 'Lane',
   columnPosition: 'Pos',
   columnHorse: 'Horse',
-  columnTime: 'Time',
+  columnTime: 'Time or gap',
   roundsDone: (done: number, total: number) => `${done} of ${total}`,
   announceRoundStart: (round: number, metres: number) =>
     `Round ${round} is off, ${formatDistance(metres)}.`,
   announceWinner: (round: number, winner: string) => `Round ${round} finished. ${winner} wins.`,
   announceDayComplete: 'All rounds are finished.',
+
+  photoTitle: (round: number) => `Photo finish, round ${round}`,
+  photoVerdict: (winner: string, margin: string) => `${winner} wins by ${margin} s`,
+  photoWinnerTick: 'Winner',
+  photoGapTick: (seconds: number) => `+${seconds} s`,
 } as const
