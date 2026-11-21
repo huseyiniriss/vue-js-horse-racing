@@ -15,17 +15,23 @@ const horses = useHorsesStore()
     </template>
 
     <table class="horse-list">
+      <colgroup>
+        <col />
+        <col class="horse-list__condition-col" />
+      </colgroup>
       <thead>
         <tr>
           <th scope="col">{{ HORSES_COPY.columnName }}</th>
           <th scope="col" class="horse-list__numeric">{{ HORSES_COPY.columnCondition }}</th>
-          <th scope="col">{{ HORSES_COPY.columnColor }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="horse in horses.horses" :key="horse.id" data-testid="horse-row">
           <th scope="row" class="horse-list__name">
             <HorseLabel :horse="horse" />
+            <span class="visually-hidden">
+              {{ HORSES_COPY.colorLabel(horse.color.name, horse.silks.pattern) }}
+            </span>
           </th>
           <td class="horse-list__numeric">
             <span class="horse-list__condition">
@@ -41,7 +47,6 @@ const horses = useHorsesStore()
               {{ horse.condition }}
             </span>
           </td>
-          <td class="horse-list__color">{{ horse.color.name }}</td>
         </tr>
       </tbody>
     </table>
@@ -51,7 +56,12 @@ const horses = useHorsesStore()
 <style scoped>
 .horse-list {
   width: 100%;
+  table-layout: fixed;
   font-size: var(--font-size-sm);
+}
+
+.horse-list__condition-col {
+  width: 6.5rem;
 }
 
 .horse-list__count {
@@ -63,7 +73,6 @@ const horses = useHorsesStore()
 .horse-list td {
   padding: var(--space-2) var(--space-3);
   text-align: left;
-  white-space: nowrap;
 }
 
 .horse-list thead th {
@@ -81,11 +90,10 @@ const horses = useHorsesStore()
 }
 
 .horse-list__name {
-  max-width: 10rem;
   font-weight: var(--font-weight-medium);
 }
 
-.horse-list__numeric {
+.horse-list .horse-list__numeric {
   text-align: right;
 }
 
@@ -94,7 +102,6 @@ const horses = useHorsesStore()
   align-items: center;
   justify-content: flex-end;
   gap: var(--space-2);
-  min-width: 4.5rem;
 }
 
 .horse-list__meter {
@@ -106,9 +113,5 @@ const horses = useHorsesStore()
     var(--color-action) calc(var(--condition) * 100%),
     var(--color-line) 0
   );
-}
-
-.horse-list__color {
-  color: var(--color-ink-muted);
 }
 </style>
