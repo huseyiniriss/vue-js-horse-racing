@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { contrastRatio } from '@/shared/lib/color'
 import { createRandom } from '@/shared/lib/random'
 
 import { generateHorses } from './generate-horses'
@@ -29,6 +30,14 @@ describe('generateHorses', () => {
     const horses = generateHorses(createRandom(5))
     expect(new Set(horses.map((horse) => horse.id)).size).toBe(20)
     expect(new Set(horses.map((horse) => horse.name)).size).toBe(20)
+  })
+
+  it('dresses every jockey in silks of the horse color with a readable trim', () => {
+    for (const horse of generateHorses(createRandom(8))) {
+      expect(horse.silks.body).toBe(horse.color.hex)
+      expect(horse.silks.trim).not.toBe(horse.silks.body)
+      expect(contrastRatio(horse.silks.body, horse.silks.trim)).toBeGreaterThanOrEqual(2.5)
+    }
   })
 
   it('is reproducible from a seed', () => {
