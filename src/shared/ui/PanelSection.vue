@@ -15,7 +15,8 @@ const headingId = useId()
       <h2 :id="headingId" class="panel-section__title">{{ title }}</h2>
       <slot name="meta" />
     </header>
-    <div class="panel-section__body">
+    <!-- Focusable so keyboard users can scroll long lists (WCAG 2.1.1). -->
+    <div class="panel-section__body" tabindex="0" :aria-labelledby="headingId" role="group">
       <slot />
     </div>
   </section>
@@ -50,8 +51,13 @@ const headingId = useId()
 
 .panel-section__body {
   flex: 1;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+.panel-section__body:focus-visible {
+  box-shadow: inset var(--focus-ring);
 }
 </style>
