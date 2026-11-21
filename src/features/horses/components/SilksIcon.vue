@@ -85,7 +85,7 @@ const JACKET =
 
 .silks-icon__outline,
 .silks-icon__cap {
-  stroke: rgb(0 0 0 / 0.38);
+  stroke: var(--color-silks-outline);
   stroke-width: 0.9;
   stroke-linejoin: round;
 }

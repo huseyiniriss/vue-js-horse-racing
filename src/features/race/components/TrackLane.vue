@@ -18,12 +18,13 @@ const props = defineProps<{
 
 const isGalloping = computed(() => props.isRunning && props.state !== null && !props.state.finished)
 const accessibleName = computed(() =>
-  props.horse ? `${RACE_COPY.lane(props.lane)}, ${props.horse.name}` : RACE_COPY.lane(props.lane),
+  props.horse ? RACE_COPY.laneWithHorse(props.lane, props.horse.name) : RACE_COPY.lane(props.lane),
 )
 </script>
 
 <template>
-  <li class="track-lane" :data-testid="`lane-${lane}`" :aria-label="accessibleName">
+  <li class="track-lane" :data-testid="`lane-${lane}`">
+    <span class="visually-hidden" data-testid="lane-name">{{ accessibleName }}</span>
     <span
       class="track-lane__stall"
       :class="{ 'track-lane__stall--open': isGateOpen }"
@@ -38,7 +39,6 @@ const accessibleName = computed(() =>
         class="track-lane__runner"
         :style="{ '--progress': state.progress }"
         data-testid="runner"
-        :data-progress="state.progress.toFixed(3)"
       >
         <HorseFigure
           class="track-lane__horse"
@@ -60,6 +60,10 @@ const accessibleName = computed(() =>
 
 <style scoped>
 .track-lane {
+  --gate-bar-width: 7px;
+  --gate-bar-inset: 2px;
+  --shadow-blur: 2px;
+
   position: relative;
   display: grid;
   grid-template-columns: var(--gate-width) 1fr;
@@ -87,9 +91,9 @@ const accessibleName = computed(() =>
 .track-lane__number {
   display: grid;
   place-items: center;
-  min-width: 1.375rem;
-  height: 1.375rem;
-  border-radius: 3px;
+  min-width: var(--cloth-size);
+  height: var(--cloth-size);
+  border-radius: var(--radius-sm);
   background: var(--color-plate);
   color: var(--color-ink-inverse);
   font-size: var(--font-size-xs);
@@ -99,11 +103,11 @@ const accessibleName = computed(() =>
 
 .track-lane__gate {
   position: absolute;
-  top: 2px;
-  bottom: 2px;
-  right: -4px;
-  width: 7px;
-  border-radius: 1px;
+  top: var(--gate-bar-inset);
+  bottom: var(--gate-bar-inset);
+  right: calc(var(--gate-bar-width) / -2);
+  width: var(--gate-bar-width);
+  border-radius: var(--gate-bar-inset);
   background: repeating-linear-gradient(
     to bottom,
     var(--color-stall-light) 0 3px,
@@ -142,11 +146,11 @@ const accessibleName = computed(() =>
   position: absolute;
   left: 18%;
   right: 12%;
-  bottom: -2px;
+  bottom: calc(var(--shadow-blur) * -1);
   height: 18%;
   border-radius: 50%;
   background: var(--color-horse-shadow);
-  filter: blur(2px);
+  filter: blur(var(--shadow-blur));
 }
 
 .track-lane__horse {

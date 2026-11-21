@@ -8,7 +8,8 @@ import PanelSection from '@/shared/ui/PanelSection.vue'
 
 import { RACE_COPY } from '../copy'
 import { useRaceStore } from '../store/race.store'
-import RoundTable, { type RoundTableRow } from './RoundTable.vue'
+import type { RoundTableRow } from './round-table'
+import RoundTable from './RoundTable.vue'
 
 const race = useRaceStore()
 const horses = useHorsesStore()

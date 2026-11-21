@@ -50,6 +50,21 @@ describe('createAnimationFrameTicker', () => {
     expect(onTick).toHaveBeenCalledWith(0.1)
   })
 
+  it('can be stopped from inside its own tick', () => {
+    stubAnimationFrames()
+    let stop: () => void = () => undefined
+    const onTick = vi.fn(() => {
+      stop()
+    })
+    stop = createAnimationFrameTicker().start(onTick)
+
+    runFrame(0)
+    runFrame(16)
+    runFrame(32)
+
+    expect(onTick).toHaveBeenCalledTimes(1)
+  })
+
   it('stops ticking when stopped', () => {
     stubAnimationFrames()
     const onTick = vi.fn()

@@ -62,10 +62,11 @@ export class RaceDayPage {
   }
 
   async runnerProgress(): Promise<number[]> {
-    const values = await this.runners.evaluateAll((elements) =>
-      elements.map((element) => Number(element.getAttribute('data-progress'))),
+    return this.runners.evaluateAll((elements) =>
+      elements.map((element) =>
+        Number((element as HTMLElement).style.getPropertyValue('--progress')),
+      ),
     )
-    return values
   }
 
   lane(lane: number): Locator {

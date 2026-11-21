@@ -13,6 +13,7 @@ export const RACE_COPY = {
   roundOf: (round: number, total: number) => `Round ${round} of ${total}`,
   distance: (metres: number) => formatDistance(metres),
   lane: (lane: number) => `Lane ${lane}`,
+  laneWithHorse: (lane: number, horse: string) => `Lane ${lane}, ${horse}`,
   finish: 'Finish',
   statusLabel: {
     idle: 'Waiting for a program',

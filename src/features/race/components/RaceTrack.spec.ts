@@ -25,13 +25,14 @@ describe('RaceTrack', () => {
     expect(wrapper.get('[data-testid="round-title"]').text()).toBe('Round 1 of 6')
     const runners = () => wrapper.findAll('[data-testid="runner"]')
     expect(runners()).toHaveLength(10)
-    expect(runners().every((runner) => runner.attributes('data-progress') === '0.000')).toBe(true)
+    const progressOf = (runner: ReturnType<typeof runners>[number]) =>
+      Number((runner.element as HTMLElement).style.getPropertyValue('--progress'))
+    expect(runners().every((runner) => progressOf(runner) === 0)).toBe(true)
 
     race.start()
     race.tick(1)
     await wrapper.vm.$nextTick()
-    const progress = runners().map((runner) => Number(runner.attributes('data-progress')))
+    const progress = runners().map(progressOf)
     expect(progress.every((value) => value > 0 && value < 1)).toBe(true)
-    expect(runners()[0]!.attributes('style')).toContain('--progress')
   })
 })

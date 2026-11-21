@@ -21,7 +21,12 @@ export function formatOrdinal(value: number): string {
 
 const ordinalRules = new Intl.PluralRules('en', { type: 'ordinal' })
 
+/** Seconds to hundredths: 0.294 → "0.29" */
+export function formatSeconds(seconds: number): string {
+  return seconds.toFixed(2)
+}
+
 /** Gap behind the winner, racecard style: 0.294 → "+0.29" */
 export function formatGap(seconds: number): string {
-  return `+${seconds.toFixed(2)}`
+  return `+${formatSeconds(seconds)}`
 }

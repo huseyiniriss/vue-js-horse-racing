@@ -52,8 +52,9 @@ button {
 }
 
 :focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
+  /* An outline (not a shadow) so focus stays visible in forced-colors mode. */
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
 }
 
 .visually-hidden {

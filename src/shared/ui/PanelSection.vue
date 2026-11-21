@@ -38,7 +38,7 @@ const headingId = useId()
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-line);
   /* A printed racecard: a heavy rule on top, square corners. */
-  border-top: 3px solid var(--color-ink);
+  border-top: var(--rule-heavy) solid var(--color-ink);
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
@@ -69,6 +69,6 @@ const headingId = useId()
 }
 
 .panel-section__body:focus-visible {
-  box-shadow: inset var(--focus-ring);
+  outline-offset: calc(var(--focus-width) * -1);
 }
 </style>

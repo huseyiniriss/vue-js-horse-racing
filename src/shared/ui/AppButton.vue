@@ -29,6 +29,7 @@ defineEmits<{ click: [event: MouseEvent] }>()
 <style scoped>
 .app-button {
   --depth-color: var(--color-secondary-depth);
+  --primary-min-width: 7.5rem;
 
   position: relative;
   display: inline-flex;
@@ -54,7 +55,7 @@ defineEmits<{ click: [event: MouseEvent] }>()
 .app-button--primary {
   --depth-color: var(--color-action-depth);
 
-  min-width: 7.5rem;
+  min-width: var(--primary-min-width);
   background: var(--color-action);
   color: var(--color-ink-inverse);
 }
@@ -83,12 +84,6 @@ defineEmits<{ click: [event: MouseEvent] }>()
 
 .app-button--primary:active:not(:disabled) {
   background: var(--color-action-pressed);
-}
-
-.app-button:focus-visible {
-  box-shadow:
-    0 var(--button-depth) 0 var(--depth-color),
-    var(--focus-ring);
 }
 
 /* Disabled: flat, as if pushed into the surface, so it reads as unavailable. */

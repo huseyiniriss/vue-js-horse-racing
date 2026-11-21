@@ -16,17 +16,20 @@ export function createAnimationFrameTicker(maxDeltaSeconds = 0.1): Ticker {
     start(onTick) {
       let frameId = 0
       let last: number | null = null
+      let stopped = false
 
       const frame = (now: number) => {
         if (last !== null) {
           onTick(Math.min((now - last) / 1000, maxDeltaSeconds))
         }
         last = now
-        frameId = requestAnimationFrame(frame)
+        // onTick may have stopped the ticker; do not schedule another frame then.
+        if (!stopped) frameId = requestAnimationFrame(frame)
       }
 
       frameId = requestAnimationFrame(frame)
       return () => {
+        stopped = true
         cancelAnimationFrame(frameId)
       }
     },

@@ -2,6 +2,7 @@
 import PanelSection from '@/shared/ui/PanelSection.vue'
 
 import { HORSES_COPY } from '../copy'
+import { HORSE_RULES } from '../domain/horse.rules'
 import { useHorsesStore } from '../store/horses.store'
 import HorseLabel from './HorseLabel.vue'
 
@@ -39,10 +40,10 @@ const horses = useHorsesStore()
                 class="horse-list__meter"
                 role="meter"
                 :aria-valuenow="horse.condition"
-                aria-valuemin="1"
-                aria-valuemax="100"
+                :aria-valuemin="HORSE_RULES.condition.min"
+                :aria-valuemax="HORSE_RULES.condition.max"
                 :aria-label="HORSES_COPY.conditionLabel(horse.condition)"
-                :style="{ '--condition': horse.condition / 100 }"
+                :style="{ '--condition': horse.condition / HORSE_RULES.condition.max }"
               />
               {{ horse.condition }}
             </span>
@@ -55,13 +56,17 @@ const horses = useHorsesStore()
 
 <style scoped>
 .horse-list {
+  --condition-column-width: 6.5rem;
+  --meter-width: 2.5rem;
+  --meter-height: 0.375rem;
+
   width: 100%;
   table-layout: fixed;
   font-size: var(--font-size-sm);
 }
 
 .horse-list__condition-col {
-  width: 6.5rem;
+  width: var(--condition-column-width);
 }
 
 .horse-list__count {
@@ -105,8 +110,8 @@ const horses = useHorsesStore()
 }
 
 .horse-list__meter {
-  width: 2.5rem;
-  height: 0.375rem;
+  width: var(--meter-width);
+  height: var(--meter-height);
   border-radius: var(--radius-sm);
   background: linear-gradient(
     to right,

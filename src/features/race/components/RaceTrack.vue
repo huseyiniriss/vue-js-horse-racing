@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 
 import { useHorsesStore } from '@/features/horses'
 
@@ -13,6 +13,7 @@ const SIGN_INTERVAL_METRES = 400
 /** Signs this close to the winning post would collide with its label. */
 const MIN_GAP_TO_FINISH = 0.22
 
+const titleId = useId()
 const race = useRaceStore()
 const horses = useHorsesStore()
 
@@ -44,17 +45,17 @@ const signs = computed(() => {
 </script>
 
 <template>
-  <section class="race-track" :aria-label="RACE_COPY.trackTitle">
+  <section class="race-track" :aria-labelledby="titleId">
     <header class="race-track__header">
       <div v-if="race.currentRound" class="race-track__round">
-        <h2 class="race-track__title" data-testid="round-title">
+        <h2 :id="titleId" class="race-track__title" data-testid="round-title">
           {{ RACE_COPY.roundOf(race.currentRound.index + 1, race.roundCount) }}
         </h2>
         <span class="race-track__distance">
           {{ RACE_COPY.distance(race.currentRound.distance) }}
         </span>
       </div>
-      <h2 v-else class="race-track__title">{{ RACE_COPY.trackTitle }}</h2>
+      <h2 v-else :id="titleId" class="race-track__title">{{ RACE_COPY.trackTitle }}</h2>
       <span
         class="race-track__status"
         :class="`race-track__status--${race.status}`"
@@ -106,7 +107,7 @@ const signs = computed(() => {
   min-width: 0;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-line);
-  border-top: 3px solid var(--color-ink);
+  border-top: var(--rule-heavy) solid var(--color-ink);
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
@@ -160,6 +161,16 @@ const signs = computed(() => {
 
 .race-track__field {
   --rail-height: 2.125rem;
+  --rail-bar: 4px;
+  --rail-bar-shade: 2px;
+  --rail-post-height: 7px;
+  --rail-post-width: 3px;
+  --rail-post-gap: 3rem;
+  --rail-total: calc(var(--rail-bar) + var(--rail-bar-shade) + var(--rail-post-height));
+  --marker-post-width: 2px;
+  --winning-post-width: 4px;
+  --winning-disc-size: 0.875rem;
+  --winning-disc-border: 2px;
 
   position: relative;
   /* Mowing bands run across the course, like on a real turf track. */
@@ -182,31 +193,31 @@ const signs = computed(() => {
   container-type: inline-size;
 }
 
-/* The running rail: a white bar with a shaded underside, on posts every 3rem. */
+/* The running rail: a white bar with a shaded underside, on evenly spaced posts. */
 .race-track__rail::after {
   content: '';
   position: absolute;
   inset: auto 0 0;
-  height: 13px;
+  height: var(--rail-total);
   background:
     linear-gradient(
         to bottom,
-        var(--color-rail) 0 4px,
-        var(--color-rail-shade) 4px 6px,
-        transparent 6px
+        var(--color-rail) 0 var(--rail-bar),
+        var(--color-rail-shade) var(--rail-bar) calc(var(--rail-bar) + var(--rail-bar-shade)),
+        transparent calc(var(--rail-bar) + var(--rail-bar-shade))
       )
       0 0 / 100% 100% no-repeat,
     repeating-linear-gradient(
         to right,
-        transparent 0 calc(3rem - 3px),
-        var(--color-rail) calc(3rem - 3px) 3rem
+        transparent 0 calc(var(--rail-post-gap) - var(--rail-post-width)),
+        var(--color-rail) calc(var(--rail-post-gap) - var(--rail-post-width)) var(--rail-post-gap)
       )
-      0 6px / 100% 7px no-repeat;
+      0 calc(var(--rail-bar) + var(--rail-bar-shade)) / 100% var(--rail-post-height) no-repeat;
 }
 
 .race-track__sign {
   position: absolute;
-  bottom: calc(13px + var(--space-2));
+  bottom: calc(var(--rail-total) + var(--space-2));
   left: calc(
     var(--start-inset) + var(--runner-width) +
       (100% - var(--runner-width) - var(--start-inset) - var(--finish-inset)) * var(--fraction)
@@ -224,10 +235,10 @@ const signs = computed(() => {
 .race-track__sign::after {
   content: '';
   position: absolute;
-  top: calc(100% + 2px);
+  top: 100%;
   left: 50%;
-  width: 2px;
-  height: calc(var(--space-2) - 2px);
+  width: var(--marker-post-width);
+  height: var(--space-2);
   background: var(--color-rail);
   transform: translateX(-50%);
 }
@@ -237,7 +248,7 @@ const signs = computed(() => {
   bottom: 0;
   right: var(--finish-inset);
   z-index: 1;
-  width: 4px;
+  width: var(--winning-post-width);
   height: calc(var(--rail-height) - var(--space-1));
   background: var(--color-rail);
 }
@@ -246,19 +257,19 @@ const signs = computed(() => {
 .race-track__winning-post::before {
   content: '';
   position: absolute;
-  top: -2px;
+  top: calc(var(--winning-disc-border) * -1);
   left: 50%;
-  width: 0.875rem;
-  height: 0.875rem;
+  width: var(--winning-disc-size);
+  height: var(--winning-disc-size);
   transform: translateX(-50%);
-  border: 2px solid var(--color-rail);
+  border: var(--winning-disc-border) solid var(--color-rail);
   border-radius: 50%;
   background: var(--color-pole);
 }
 
 .race-track__winning-label {
   position: absolute;
-  top: 1px;
+  top: 0;
   right: calc(100% + var(--space-4));
   color: var(--color-ink-inverse);
   font-size: var(--font-size-xs);
@@ -284,9 +295,9 @@ const signs = computed(() => {
   top: var(--rail-height);
   bottom: 0;
   right: var(--finish-inset);
-  width: 4px;
+  width: var(--winning-post-width);
   background: var(--color-rail);
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
+  box-shadow: 0 0 0 var(--border-width) var(--color-finish-edge);
   pointer-events: none;
 }
 
@@ -299,6 +310,6 @@ const signs = computed(() => {
   color: var(--color-ink-inverse);
   font-weight: var(--font-weight-semibold);
   text-align: center;
-  text-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+  text-shadow: var(--shadow-text-on-turf);
 }
 </style>

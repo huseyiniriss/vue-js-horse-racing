@@ -1,19 +1,10 @@
 <script setup lang="ts">
 import { useId } from 'vue'
 
-import { HorseLabel, type Horse } from '@/features/horses'
+import { HorseLabel } from '@/features/horses'
 
+import type { RoundTableRow } from './round-table'
 import SaddleCloth from './SaddleCloth.vue'
-
-export interface RoundTableRow {
-  readonly key: string | number
-  /** Saddle-cloth number (program) or finishing position (results). */
-  readonly lead: number
-  readonly horse: Horse
-  readonly trailing?: string
-  /** Podium styling for the first three of a result. */
-  readonly podium?: 1 | 2 | 3
-}
 
 defineProps<{
   title: string
@@ -70,6 +61,9 @@ const headingId = useId()
 
 <style scoped>
 .round-table {
+  --lead-column-width: 3rem;
+  --trailing-column-width: 4.5rem;
+
   font-size: var(--font-size-sm);
 }
 
@@ -108,11 +102,11 @@ const headingId = useId()
 }
 
 .round-table__lead-col {
-  width: 3rem;
+  width: var(--lead-column-width);
 }
 
 .round-table__trailing-col {
-  width: 4.5rem;
+  width: var(--trailing-column-width);
 }
 
 .round-table__lead,

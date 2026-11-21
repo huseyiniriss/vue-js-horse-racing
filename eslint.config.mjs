@@ -79,6 +79,7 @@ export default defineConfigWithVueTs(
           ],
           patterns: [
             FEATURE_PUBLIC_API_ONLY,
+            { group: ['@/app/*'], message: 'Features must not depend on the app shell.' },
             {
               group: ['../store/*', '../components/*', '../composables/*'],
               message: 'Domain code must not depend on the UI or state layers.',

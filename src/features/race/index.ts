@@ -1,11 +1,6 @@
-// Public API of the race feature.
-export type { Placing, RoundResult } from './domain/race-engine'
-export type { RaceStatus } from './domain/race-status'
-export { RACE_RULES, type RaceRules } from './domain/race.rules'
-export type { Round, Schedule } from './domain/schedule'
+// Public API of the race feature: only what the app shell uses.
 export { useRaceClock } from './composables/useRaceClock'
-export { useRaceStore, type LaneState, type PlaybackAction } from './store/race.store'
-export { RACE_TIMING, type RaceTiming } from './store/race.timing'
+export { useRaceStore } from './store/race.store'
 export { default as ProgramPanel } from './components/ProgramPanel.vue'
 export { default as RaceAnnouncer } from './components/RaceAnnouncer.vue'
 export { default as RaceControls } from './components/RaceControls.vue'

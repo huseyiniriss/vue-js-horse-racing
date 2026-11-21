@@ -52,6 +52,8 @@ const replayHref = computed(() => {
 
 <style scoped>
 .app-shell {
+  --stacked-panel-max-height: 26rem;
+
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -90,7 +92,7 @@ const replayHref = computed(() => {
 .app-shell__horses,
 .app-shell__program,
 .app-shell__results {
-  max-height: 26rem;
+  max-height: var(--stacked-panel-max-height);
 }
 
 .app-shell__horses {

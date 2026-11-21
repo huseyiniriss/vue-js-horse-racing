@@ -39,6 +39,9 @@
   --color-rail-band: #1f4a29;
   --color-rail-shade: rgb(0 0 0 / 0.35);
   --color-sign: #ffffff;
+  --color-finish-edge: rgb(0 0 0 / 0.12);
+  --color-silks-outline: rgb(0 0 0 / 0.38);
+  --shadow-text-on-turf: 0 1px 2px rgb(0 0 0 / 0.35);
   /* Fine grass grain over the mowing bands (tiny inline SVG noise). */
   --turf-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.22 0 0 0 0 0.08 0 0 0 0.38 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
 
@@ -93,7 +96,9 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --border-width: 1px;
-  --focus-ring: 0 0 0 3px var(--color-focus);
+  --rule-heavy: 3px; /* racecard top rule on panels and the track */
+  --focus-width: 3px;
+  --focus-offset: 2px;
   /* Tactile buttons: the visible thickness of the key, and how far it travels when pressed. */
   --button-depth: 4px;
   --button-press: 3px;
