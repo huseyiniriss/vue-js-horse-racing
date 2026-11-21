@@ -4,4 +4,6 @@ playwright-report
 test-results
 package-lock.json
 e2e/**/*-snapshots
-src/**/assets/*.json
+scripts/data/*.json
+src/**/assets/*.svg
+src/**/assets/*.meta.ts

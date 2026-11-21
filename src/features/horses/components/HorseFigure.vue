@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import gallop from '../assets/gallop-frames.json'
+import { GALLOP_ASPECT_RATIO, GALLOP_FRAME_COUNT } from '../assets/gallop.meta'
 
 /**
  * A racehorse and jockey drawn from Eadweard Muybridge's "The Horse in Motion"
  * (1878, public domain), the photographic study that first showed how a horse gallops.
  *
- * The 15 frames are packed into sprites used as CSS masks, so each layer takes a
- * color from CSS and the gallop is a single `steps()` animation per layer: the horse,
- * and a clipped copy that paints the jockey in the silks color, in sync.
+ * The 15 frames live in two static sprites (built by `npm run sprites`) used as CSS
+ * masks: one paints the horse, one the jockey in the silks color. Each layer runs the
+ * same `steps()` animation, so they stay in sync.
  */
 withDefaults(
   defineProps<{
@@ -22,33 +22,6 @@ withDefaults(
   }>(),
   { jockey: undefined, galloping: false, frame: 0, phase: 0 },
 )
-
-const [, , width = 1, height = 1] = gallop.viewBox.split(/\s+/).map(Number)
-const frameCount = gallop.paths.length
-
-function toMaskUrl(svgBody: string): string {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width * frameCount} ${height}">${svgBody}</svg>`
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
-}
-
-const HORSE_SPRITE = toMaskUrl(
-  gallop.paths.map((d, i) => `<path transform="translate(${width * i} 0)" d="${d}"/>`).join(''),
-)
-
-const JOCKEY_SPRITE = toMaskUrl(
-  gallop.paths
-    .map((d, i) => {
-      const [x = 0, y = 0, w = 0, h = 0] = gallop.jockey[i] ?? []
-      return (
-        `<g transform="translate(${width * i} 0)">` +
-        `<clipPath id="j${i}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>` +
-        `<path clip-path="url(#j${i})" d="${d}"/></g>`
-      )
-    })
-    .join(''),
-)
-
-const ASPECT_RATIO = width / height
 </script>
 
 <template>
@@ -56,18 +29,18 @@ const ASPECT_RATIO = width / height
     class="horse-figure"
     :class="{ 'horse-figure--galloping': galloping }"
     :style="{
-      '--frames': frameCount,
-      '--frame': frame % frameCount,
+      '--frames': GALLOP_FRAME_COUNT,
+      '--frame': frame % GALLOP_FRAME_COUNT,
       '--phase': phase,
-      aspectRatio: ASPECT_RATIO,
+      aspectRatio: GALLOP_ASPECT_RATIO,
     }"
     aria-hidden="true"
   >
-    <span class="horse-figure__layer horse-figure__horse" :style="{ '--sprite': HORSE_SPRITE }" />
+    <span class="horse-figure__layer horse-figure__horse" />
     <span
       v-if="jockey"
       class="horse-figure__layer horse-figure__silks"
-      :style="{ '--sprite': JOCKEY_SPRITE, '--jockey-color': jockey }"
+      :style="{ '--jockey-color': jockey }"
     />
   </span>
 </template>
@@ -82,7 +55,6 @@ const ASPECT_RATIO = width / height
 .horse-figure__layer {
   position: absolute;
   inset: 0;
-  mask-image: var(--sprite);
   mask-repeat: no-repeat;
   mask-size: calc(var(--frames) * 100%) 100%;
   mask-position: calc(var(--frame) / (var(--frames) - 1) * 100%) 0;
@@ -90,18 +62,19 @@ const ASPECT_RATIO = width / height
 
 .horse-figure__horse {
   background: currentColor;
+  mask-image: url('../assets/gallop-horse.svg');
 }
 
 .horse-figure__silks {
   background: var(--jockey-color);
+  mask-image: url('../assets/gallop-jockey.svg');
   /* A hairline halo keeps dark silks readable against a dark horse. */
-  filter: drop-shadow(0 0 1px rgb(255 255 255 / 0.95))
-    drop-shadow(0 0 0.5px rgb(255 255 255 / 0.95));
+  filter: var(--silks-halo);
 }
 
 .horse-figure--galloping .horse-figure__layer {
   animation: gallop var(--duration-gallop) steps(var(--frames), jump-none) infinite;
-  animation-delay: calc(var(--phase) * -61ms);
+  animation-delay: calc(var(--phase) * var(--gallop-phase-step));
 }
 
 @keyframes gallop {

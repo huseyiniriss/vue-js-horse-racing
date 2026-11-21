@@ -103,6 +103,11 @@ export default defineConfigWithVueTs(
     },
   },
   {
+    name: 'app/scripts',
+    files: ['scripts/**'],
+    rules: { 'no-console': 'off' },
+  },
+  {
     name: 'app/tests',
     files: ['**/*.spec.ts', 'e2e/**'],
     rules: {

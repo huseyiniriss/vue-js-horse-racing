@@ -26,7 +26,8 @@
     "check": "run-s format:check lint type-check test:unit",
     "test:e2e:docker": "docker run --rm --ipc=host -v \"$PWD\":/work -v horse-racing-pw-modules:/work/node_modules -w /work mcr.microsoft.com/playwright:v1.65.1-noble sh -c \"npm ci && npx playwright test --grep-invert @visual\"",
     "test:visual:docker": "docker run --rm --ipc=host -v \"$PWD\":/work -v horse-racing-pw-modules:/work/node_modules -w /work mcr.microsoft.com/playwright:v1.65.1-noble sh -c \"npm ci && npx playwright test --grep @visual\"",
-    "test:visual:update:docker": "docker run --rm --ipc=host -v \"$PWD\":/work -v horse-racing-pw-modules:/work/node_modules -w /work mcr.microsoft.com/playwright:v1.65.1-noble sh -c \"npm ci && npx playwright test --grep @visual --update-snapshots\""
+    "test:visual:update:docker": "docker run --rm --ipc=host -v \"$PWD\":/work -v horse-racing-pw-modules:/work/node_modules -w /work mcr.microsoft.com/playwright:v1.65.1-noble sh -c \"npm ci && npx playwright test --grep @visual --update-snapshots\"",
+    "sprites": "node scripts/build-gallop-sprites.mjs"
   },
   "dependencies": {
     "@fontsource/open-runde": "5.3.0",
