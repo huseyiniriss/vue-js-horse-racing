@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   quality:
-    name: Lint, type-check and unit tests
+    name: Format, lint, type-check, unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,26 +28,21 @@ jobs:
 
   e2e:
     name: E2E, accessibility and visual tests
+    needs: quality
     runs-on: ubuntu-latest
     # Same image the visual baselines were generated in, so screenshots match pixel for pixel.
     container:
       image: mcr.microsoft.com/playwright:v1.65.1-noble
       options: --ipc=host
+    env:
+      HOME: /root
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: npm
       - run: npm ci
       - run: npx playwright test
-        env:
-          HOME: /root
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: ${{ !cancelled() }}
         with:
           name: playwright-report
-          path: |
-            playwright-report
-            test-results
+          path: playwright-report
           retention-days: 7
