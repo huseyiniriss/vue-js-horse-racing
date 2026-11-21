@@ -1,0 +1,52 @@
+{
+  "name": "insider-horse-racing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Interactive horse racing game built with Vue 3, TypeScript and Pinia.",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "build-only": "vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --build",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest",
+    "test:unit": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test --grep-invert @visual",
+    "test:visual": "playwright test --grep @visual",
+    "test:visual:update": "playwright test --grep @visual --update-snapshots",
+    "check": "run-s format:check lint type-check test:unit"
+  },
+  "dependencies": {
+    "pinia": "4.1.0",
+    "vue": "3.5.46"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@tsconfig/node22": "22.0.7",
+    "@types/node": "26.6.6",
+    "@vitejs/plugin-vue": "6.0.11",
+    "@vitest/coverage-v8": "5.1.1",
+    "@vue/eslint-config-typescript": "14.9.0",
+    "@vue/test-utils": "2.6.0",
+    "@vue/tsconfig": "0.9.1",
+    "eslint": "10.15.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-vue": "10.12.1",
+    "jsdom": "31.0.1",
+    "npm-run-all2": "9.1.0",
+    "prettier": "3.10.1",
+    "typescript": "6.0.3",
+    "vite": "8.3.8",
+    "vitest": "5.1.1",
+    "vue-tsc": "3.3.14"
+  }
+}
