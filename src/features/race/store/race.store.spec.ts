@@ -187,6 +187,15 @@ describe('race store', () => {
       expect(race.elapsed).toBe(0)
     })
 
+    it('reveals each finishing position on the track as the horse crosses the line', () => {
+      runUntil(race, () => race.lanes.some((lane) => lane.finished))
+      const finished = race.lanes.filter((lane) => lane.finished)
+      expect(finished.map((lane) => lane.position)).toEqual([1])
+      expect(
+        race.lanes.filter((lane) => !lane.finished).every((lane) => lane.position === null),
+      ).toBe(true)
+    })
+
     it('handles a huge frame without losing a result', () => {
       race.tick(10_000)
       expect(race.results).toHaveLength(1)

@@ -22,6 +22,8 @@ export interface LaneState {
   /** 0 at the gate, 1 at the finish line. */
   readonly progress: number
   readonly finished: boolean
+  /** Finishing position, revealed once the horse crosses the line. */
+  readonly position: number | null
 }
 
 /** The one action the Start/Pause button performs in the current status, if any. */
@@ -48,21 +50,34 @@ export const useRaceStore = defineStore('race', () => {
   // Getters
   const currentRound = computed<Round | null>(() => schedule.value[currentRoundIndex.value] ?? null)
   const canGenerate = computed(() => canTransition(status.value, 'generate'))
+  const roundCount = computed(() => rules.value.roundDistances.length)
+  const laneCount = computed(() => rules.value.horsesPerRound)
 
   const playbackAction = computed<PlaybackAction | null>(() => {
     const actions: PlaybackAction[] = ['start', 'pause', 'resume']
     return actions.find((action) => canTransition(status.value, action)) ?? null
   })
 
+  /** Final order of the current round. Computed once per round, not per frame. */
+  const positionsByHorse = computed(() => {
+    const sim = simulation.value
+    if (!sim) return new Map<HorseId, number>()
+    return new Map(rankRunners(sim).placings.map((placing) => [placing.horseId, placing.position]))
+  })
+
   const lanes = computed<readonly LaneState[]>(() => {
     const sim = simulation.value
     if (sim) {
-      return sim.runners.map((runner) => ({
-        lane: runner.lane,
-        horseId: runner.horseId,
-        progress: distanceCovered(runner, sim.segmentLength, elapsed.value) / sim.distance,
-        finished: elapsed.value >= runner.finishTime,
-      }))
+      return sim.runners.map((runner) => {
+        const finished = elapsed.value >= runner.finishTime
+        return {
+          lane: runner.lane,
+          horseId: runner.horseId,
+          progress: distanceCovered(runner, sim.segmentLength, elapsed.value) / sim.distance,
+          finished,
+          position: finished ? (positionsByHorse.value.get(runner.horseId) ?? null) : null,
+        }
+      })
     }
     // Before the start the next field waits at the gate.
     return (currentRound.value?.lanes ?? []).map((horseId, index) => ({
@@ -70,6 +85,7 @@ export const useRaceStore = defineStore('race', () => {
       horseId,
       progress: 0,
       finished: false,
+      position: null,
     }))
   })
 
@@ -164,6 +180,8 @@ export const useRaceStore = defineStore('race', () => {
     results,
     // getters
     currentRound,
+    roundCount,
+    laneCount,
     lanes,
     canGenerate,
     playbackAction,
