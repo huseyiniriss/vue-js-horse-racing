@@ -6,8 +6,8 @@ import gallop from '../assets/gallop-frames.json'
  * (1878, public domain), the photographic study that first showed how a horse gallops.
  *
  * The 15 frames are packed into sprites used as CSS masks, so each layer takes a
- * color from CSS and the gallop is a single `steps()` animation per layer:
- * the horse, the jockey's white breeches, and the jockey's silks, all in sync.
+ * color from CSS and the gallop is a single `steps()` animation per layer: the horse,
+ * and a clipped copy that paints the jockey in the silks color, in sync.
  */
 withDefaults(
   defineProps<{
@@ -48,10 +48,6 @@ const JOCKEY_SPRITE = toMaskUrl(
     .join(''),
 )
 
-const BREECHES_SPRITE = toMaskUrl(
-  gallop.breeches.map((d, i) => `<path transform="translate(${width * i} 0)" d="${d}"/>`).join(''),
-)
-
 const ASPECT_RATIO = width / height
 </script>
 
@@ -68,16 +64,11 @@ const ASPECT_RATIO = width / height
     aria-hidden="true"
   >
     <span class="horse-figure__layer horse-figure__horse" :style="{ '--sprite': HORSE_SPRITE }" />
-    <template v-if="jockey">
-      <span
-        class="horse-figure__layer horse-figure__breeches"
-        :style="{ '--sprite': BREECHES_SPRITE }"
-      />
-      <span
-        class="horse-figure__layer horse-figure__silks"
-        :style="{ '--sprite': JOCKEY_SPRITE, '--jockey-color': jockey }"
-      />
-    </template>
+    <span
+      v-if="jockey"
+      class="horse-figure__layer horse-figure__silks"
+      :style="{ '--sprite': JOCKEY_SPRITE, '--jockey-color': jockey }"
+    />
   </span>
 </template>
 
@@ -99,10 +90,6 @@ const ASPECT_RATIO = width / height
 
 .horse-figure__horse {
   background: currentColor;
-}
-
-.horse-figure__breeches {
-  background: var(--color-breeches);
 }
 
 .horse-figure__silks {

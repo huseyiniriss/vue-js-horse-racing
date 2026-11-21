@@ -56,7 +56,15 @@ const print = computed(() => {
 </script>
 
 <template>
-  <figure v-if="print" :key="print.key" class="photo-finish" data-testid="photo-finish">
+  <figure v-if="!print" class="photo-finish photo-finish--empty">
+    <figcaption class="photo-finish__caption">
+      <span class="photo-finish__title">{{ RACE_COPY.photoEmptyTitle }}</span>
+    </figcaption>
+    <div class="photo-finish__print photo-finish__print--empty">
+      <p class="photo-finish__hint">{{ RACE_COPY.photoEmpty }}</p>
+    </div>
+  </figure>
+  <figure v-else :key="print.key" class="photo-finish" data-testid="photo-finish">
     <figcaption class="photo-finish__caption">
       <span class="photo-finish__title">{{ print.title }}</span>
       <span class="photo-finish__verdict" data-testid="photo-verdict">{{ print.verdict }}</span>
@@ -78,9 +86,10 @@ const print = computed(() => {
       </div>
       <div class="photo-finish__scale">
         <span
-          v-for="tick in print.ticks"
+          v-for="(tick, index) in print.ticks"
           :key="tick.label"
           class="photo-finish__tick"
+          :class="{ 'photo-finish__tick--winner': index === 0 }"
           :style="{ '--offset': tick.offset }"
         >
           {{ tick.label }}
@@ -175,6 +184,26 @@ const print = computed(() => {
   color: var(--color-photo-ink);
   font-size: var(--font-size-xs);
   transform: translateX(50%);
+}
+
+.photo-finish__tick--winner {
+  transform: none;
+}
+
+/* Before the first result: same footprint, so the page does not jump. */
+.photo-finish__print--empty {
+  display: grid;
+  place-items: center;
+  background: var(--color-surface-sunken);
+  animation: none;
+}
+
+.photo-finish__hint {
+  max-width: 36ch;
+  padding: var(--space-4);
+  color: var(--color-ink-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
 }
 
 /* The print develops from the finish line outwards, like the camera's scan. */

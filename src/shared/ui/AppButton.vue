@@ -94,7 +94,7 @@ defineEmits<{ click: [event: MouseEvent] }>()
 /* Disabled: flat, as if pushed into the surface, so it reads as unavailable. */
 .app-button:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.6;
   box-shadow: none;
   transform: translateY(var(--button-press));
 }

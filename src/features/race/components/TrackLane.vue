@@ -99,10 +99,10 @@ const accessibleName = computed(() =>
 
 .track-lane__gate {
   position: absolute;
-  top: 3px;
-  bottom: 3px;
-  right: -3px;
-  width: 4px;
+  top: 2px;
+  bottom: 2px;
+  right: -4px;
+  width: 7px;
   border-radius: 1px;
   background: repeating-linear-gradient(
     to bottom,
@@ -125,10 +125,14 @@ const accessibleName = computed(() =>
 .track-lane__runner {
   position: absolute;
   bottom: 4%;
-  left: 0;
+  left: var(--start-inset);
   width: var(--runner-width);
   /* The horse's nose touches the finish line at progress 1. */
-  transform: translateX(calc(var(--progress) * (100cqi - var(--runner-width))));
+  transform: translateX(
+    calc(
+      var(--progress) * (100cqi - var(--runner-width) - var(--start-inset) - var(--finish-inset))
+    )
+  );
   will-change: transform;
 }
 
@@ -152,7 +156,7 @@ const accessibleName = computed(() =>
 .track-lane__position {
   position: absolute;
   top: 50%;
-  right: calc(100% + var(--space-1));
+  right: calc(100% + var(--space-2));
   padding: 0 var(--space-1);
   border-radius: var(--radius-sm);
   background: var(--color-surface);

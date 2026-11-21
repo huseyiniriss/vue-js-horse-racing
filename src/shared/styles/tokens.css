@@ -20,13 +20,12 @@
   --color-ink-inverse: #ffffff;
 
   /* Color: track */
-  --color-turf: #3a7a45;
-  --color-turf-stripe: #43884f;
+  --color-turf: #377542;
+  --color-turf-stripe: #438a4f;
   --color-rail: #ffffff;
   --color-lane-line: rgb(255 255 255 / 0.14);
   --color-pole: #c8102e;
   --color-horse: #2a1d14;
-  --color-breeches: #f4f1ea;
   --color-horse-shadow: rgb(10 30 15 / 0.35);
   /* Starting stalls: brushed aluminium with black number plates. */
   --color-stall-light: #f5f7f5;
@@ -36,9 +35,10 @@
   --color-plate: #17251c;
   --color-gate: #f4f6f4;
   --color-rail-band: #1f4a29;
+  --color-rail-shade: rgb(0 0 0 / 0.35);
   --color-sign: #ffffff;
   /* Fine grass grain over the mowing bands (tiny inline SVG noise). */
-  --turf-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.25 0 0 0 0 0.1 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
+  --turf-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.22 0 0 0 0 0.08 0 0 0 0.38 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
 
   /* Color: photo-finish print */
   --color-photo-paper: #f3f1ea;
@@ -103,6 +103,9 @@
   --lane-height: 2.5rem;
   --runner-width: 3.75rem;
   --gate-width: 2.25rem;
+  /* Clearances: horses start clear of the stall gate and finish on the winning line. */
+  --start-inset: 0.5rem;
+  --finish-inset: 0.5rem;
   --silks-size: 1.25rem;
   --cloth-size: 1.375rem;
 
@@ -111,7 +114,7 @@
   --duration-fast: 140ms;
   --duration-base: 240ms;
   --duration-gallop: 420ms;
-  --duration-gate: 260ms;
+  --duration-gate: 320ms;
   --duration-develop: 700ms;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);

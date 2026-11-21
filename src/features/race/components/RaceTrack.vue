@@ -179,14 +179,38 @@ const signs = computed(() => {
   height: var(--rail-height);
   margin-left: var(--gate-width);
   background: linear-gradient(to bottom, var(--color-rail-band), var(--color-turf));
-  border-bottom: 3px solid var(--color-rail);
   container-type: inline-size;
+}
+
+/* The running rail: a white bar with a shaded underside, on posts every 3rem. */
+.race-track__rail::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 13px;
+  background:
+    linear-gradient(
+        to bottom,
+        var(--color-rail) 0 4px,
+        var(--color-rail-shade) 4px 6px,
+        transparent 6px
+      )
+      0 0 / 100% 100% no-repeat,
+    repeating-linear-gradient(
+        to right,
+        transparent 0 calc(3rem - 3px),
+        var(--color-rail) calc(3rem - 3px) 3rem
+      )
+      0 6px / 100% 7px no-repeat;
 }
 
 .race-track__sign {
   position: absolute;
-  bottom: var(--space-2);
-  left: calc(var(--runner-width) + (100% - var(--runner-width)) * var(--fraction));
+  bottom: calc(13px + var(--space-2));
+  left: calc(
+    var(--start-inset) + var(--runner-width) +
+      (100% - var(--runner-width) - var(--start-inset) - var(--finish-inset)) * var(--fraction)
+  );
   color: var(--color-ink-inverse);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
@@ -210,21 +234,23 @@ const signs = computed(() => {
 
 .race-track__winning-post {
   position: absolute;
-  bottom: -3px;
-  right: 0;
+  bottom: 0;
+  right: var(--finish-inset);
+  z-index: 1;
   width: 4px;
   height: calc(var(--rail-height) - var(--space-1));
   background: var(--color-rail);
 }
 
-/* The red disc on top of the winning post, kept inside the track's edge. */
+/* The red disc on top of the winning post. */
 .race-track__winning-post::before {
   content: '';
   position: absolute;
   top: -2px;
-  right: 0;
+  left: 50%;
   width: 0.875rem;
   height: 0.875rem;
+  transform: translateX(-50%);
   border: 2px solid var(--color-rail);
   border-radius: 50%;
   background: var(--color-pole);
@@ -257,7 +283,7 @@ const signs = computed(() => {
   position: absolute;
   top: var(--rail-height);
   bottom: 0;
-  right: 0;
+  right: var(--finish-inset);
   width: 4px;
   background: var(--color-rail);
   box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);

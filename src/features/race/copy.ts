@@ -40,5 +40,7 @@ export const RACE_COPY = {
   photoTitle: (round: number) => `Photo finish, round ${round}`,
   photoVerdict: (winner: string, margin: string) => `${winner} wins by ${margin} s`,
   photoWinnerTick: 'Winner',
+  photoEmptyTitle: 'Photo finish',
+  photoEmpty: 'The finish-line camera prints each round here as soon as it ends.',
   photoGapTick: (seconds: number) => `+${seconds} s`,
 } as const
