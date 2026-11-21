@@ -13,6 +13,7 @@ export default mergeConfig(
       include: ['src/**/*.spec.ts'],
       exclude: [...configDefaults.exclude, 'e2e/**'],
       restoreMocks: true,
+      setupFiles: ['src/test/vitest.setup.ts'],
       coverage: {
         provider: 'v8',
         include: ['src/**/*.{ts,vue}'],
