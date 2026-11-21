@@ -20,3 +20,8 @@ export function formatOrdinal(value: number): string {
 }
 
 const ordinalRules = new Intl.PluralRules('en', { type: 'ordinal' })
+
+/** Gap behind the winner, racecard style: 0.294 → "+0.29" */
+export function formatGap(seconds: number): string {
+  return `+${seconds.toFixed(2)}`
+}

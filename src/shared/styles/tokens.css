@@ -3,7 +3,8 @@
  * sizes or durations elsewhere (see docs/decisions/0007-code-conventions.md).
  *
  * Direction: a racecourse on race day. Turf green and white rails on the track,
- * a printed racecard for the panels, silks colors for the horses.
+ * a printed racecard for the panels, jockey silks for the horses, and a
+ * photo-finish print as the one memorable moment.
  */
 :root {
   /* Color: surfaces */
@@ -19,11 +20,24 @@
   --color-ink-inverse: #ffffff;
 
   /* Color: track */
-  --color-turf: #2e6b3b;
-  --color-turf-stripe: #367a44;
+  --color-turf: #3a7a45;
+  --color-turf-stripe: #43884f;
   --color-rail: #ffffff;
-  --color-lane-line: rgb(255 255 255 / 0.28);
-  --color-marker: rgb(255 255 255 / 0.75);
+  --color-lane-line: rgb(255 255 255 / 0.14);
+  --color-pole: #c8102e;
+  --color-horse: #2a1d14;
+  --color-horse-shadow: rgb(10 30 15 / 0.35);
+  --color-stall: #23462f;
+  --color-stall-frame: #142b1c;
+  --color-gate: #f4f6f4;
+  --color-sign: #ffffff;
+  /* Fine grass grain over the mowing bands (tiny inline SVG noise). */
+  --turf-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.25 0 0 0 0 0.1 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
+
+  /* Color: photo-finish print */
+  --color-photo-paper: #f3f1ea;
+  --color-photo-ink: #2b2925;
+  --color-photo-rule: rgb(43 41 37 / 0.18);
 
   /* Color: actions and states */
   --color-action: #1f5a31;
@@ -31,14 +45,18 @@
   --color-action-pressed: #113a1e;
   --color-highlight: #fff1b8;
   --color-focus: #1d5fd1;
-  --color-gold: #c8930a;
-  --color-silver: #8e999f;
-  --color-bronze: #a8662e;
+  /* Podium: backgrounds take ink text; the -text variants pass WCAG AA on white. */
+  --color-gold: #e2b33c;
+  --color-silver: #c3cbd0;
+  --color-bronze: #d39a6a;
+  --color-gold-text: #8a6100;
+  --color-silver-text: #5b666c;
+  --color-bronze-text: #8b4a17;
 
-  /* Typography: Archivo's width axis gives condensed numerals and headings from one family */
-  --font-family: 'Archivo Variable', system-ui, sans-serif;
-  --font-stretch-condensed: 80%;
-  --font-stretch-normal: 100%;
+  /* Typography: one family, Open Runde (a rounded Inter), tabular numerals throughout */
+  --font-family: 'Open Runde', system-ui, sans-serif;
+  --letter-spacing-tight: -0.015em;
+  --letter-spacing-display: -0.025em;
   --font-size-xs: 0.75rem; /* 12px */
   --font-size-sm: 0.875rem; /* 14px */
   --font-size-md: 1rem; /* 16px */
@@ -46,8 +64,9 @@
   --font-size-xl: 1.5625rem; /* 25px */
   --font-size-2xl: 1.9375rem; /* 31px */
   --font-weight-regular: 400;
-  --font-weight-medium: 550;
-  --font-weight-bold: 720;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
   --line-height-tight: 1.15;
   --line-height-body: 1.45;
 
@@ -68,18 +87,29 @@
 
   /* Layout */
   --layout-max-width: 1600px;
-  --panel-width: 17rem;
-  --lane-height: 2.75rem;
-  --runner-size: 3rem;
+  --panel-width: 15.5rem;
+  --lane-height: 2.5rem;
+  --runner-width: 3.75rem;
   --gate-width: 2.25rem;
+  --silks-size: 1.25rem;
+  --cloth-size: 1.375rem;
 
   /* Motion */
   --duration-instant: 80ms;
   --duration-fast: 140ms;
   --duration-base: 240ms;
-  --duration-gallop: 360ms;
+  --duration-gallop: 420ms;
+  --duration-gate: 260ms;
+  --duration-develop: 700ms;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+@media (min-width: 80rem) {
+  :root {
+    --lane-height: 3rem;
+    --runner-width: 4.5rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -87,5 +117,7 @@
     --duration-instant: 0ms;
     --duration-fast: 0ms;
     --duration-base: 0ms;
+    --duration-gate: 0ms;
+    --duration-develop: 0ms;
   }
 }

@@ -29,7 +29,7 @@
     "test:visual:update:docker": "docker run --rm --ipc=host -v \"$PWD\":/work -v horse-racing-pw-modules:/work/node_modules -w /work mcr.microsoft.com/playwright:v1.65.1-noble sh -c \"npm ci && npx playwright test --grep @visual --update-snapshots\""
   },
   "dependencies": {
-    "@fontsource-variable/archivo": "5.3.0",
+    "@fontsource/open-runde": "5.3.0",
     "pinia": "4.1.0",
     "vue": "3.5.46"
   },

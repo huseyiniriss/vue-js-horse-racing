@@ -1,4 +1,7 @@
-@import '@fontsource-variable/archivo/wdth.css';
+@import '@fontsource/open-runde/latin-400.css';
+@import '@fontsource/open-runde/latin-500.css';
+@import '@fontsource/open-runde/latin-600.css';
+@import '@fontsource/open-runde/latin-700.css';
 @import './tokens.css';
 
 *,
@@ -21,6 +24,7 @@ body {
   font-size: var(--font-size-md);
   line-height: var(--line-height-body);
   font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
   -webkit-font-smoothing: antialiased;
 }
 

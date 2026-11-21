@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatDistance, formatOrdinal, formatRaceTime } from './format'
+import { formatDistance, formatGap, formatOrdinal, formatRaceTime } from './format'
 
 describe('format', () => {
   it('formats distances in metres', () => {
@@ -25,5 +25,9 @@ describe('format', () => {
     [21, '21st'],
   ])('formats ordinal %i as %s', (value, expected) => {
     expect(formatOrdinal(value)).toBe(expected)
+  })
+  it('formats the gap behind the winner', () => {
+    expect(formatGap(0.294)).toBe('+0.29')
+    expect(formatGap(3)).toBe('+3.00')
   })
 })
