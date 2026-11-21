@@ -14,6 +14,6 @@ if (typeof window.matchMedia !== 'function') {
   })
 }
 
-if (typeof Element.prototype.scrollIntoView !== 'function') {
-  Object.defineProperty(Element.prototype, 'scrollIntoView', { value: noop })
+if (typeof Element.prototype.scrollTo !== 'function') {
+  Object.defineProperty(Element.prototype, 'scrollTo', { value: noop, writable: true })
 }

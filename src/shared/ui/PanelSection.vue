@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useId } from 'vue'
 
+import { SCROLL_CONTAINER_ATTRIBUTE } from '@/shared/composables/useScrollIntoView'
+
 defineProps<{
   /** Visible heading; also names the region for assistive technology. */
   title: string
@@ -21,7 +23,7 @@ const headingId = useId()
       tabindex="0"
       :aria-labelledby="headingId"
       role="group"
-      data-scroll-container
+      :[SCROLL_CONTAINER_ATTRIBUTE]="true"
     >
       <slot />
     </div>
