@@ -5,9 +5,9 @@ import { GALLOP_ASPECT_RATIO, GALLOP_FRAME_COUNT } from '../assets/gallop.meta'
  * A racehorse and jockey drawn from Eadweard Muybridge's "The Horse in Motion"
  * (1878, public domain), the photographic study that first showed how a horse gallops.
  *
- * The 15 frames live in two static sprites (built by `npm run sprites`) used as CSS
- * masks: one paints the horse, one the jockey in the silks color. Each layer runs the
- * same `steps()` animation, so they stay in sync.
+ * The 15 frames live in static sprites (built by `npm run sprites`) used as CSS masks:
+ * the horse, the jockey's white breeches, and the jockey in the silks color. Each layer
+ * runs the same `steps()` animation, so they stay in sync.
  */
 withDefaults(
   defineProps<{
@@ -37,6 +37,7 @@ withDefaults(
     aria-hidden="true"
   >
     <span class="horse-figure__layer horse-figure__horse" />
+    <span v-if="jockey" class="horse-figure__layer horse-figure__breeches" />
     <span
       v-if="jockey"
       class="horse-figure__layer horse-figure__silks"
@@ -63,6 +64,12 @@ withDefaults(
 .horse-figure__horse {
   background: currentColor;
   mask-image: url('../assets/gallop-horse.svg');
+}
+
+.horse-figure__breeches {
+  background: var(--color-breeches);
+  mask-image: url('../assets/gallop-breeches.svg');
+  filter: var(--breeches-edge);
 }
 
 .horse-figure__silks {

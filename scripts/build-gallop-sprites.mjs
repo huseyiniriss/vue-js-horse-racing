@@ -30,7 +30,28 @@ const jockey = source.paths
   })
   .join('')
 
+// Breeches: the traced silhouettes do not separate the rider's leg from the horse, so the
+// leg is drawn as a bent stroke (hip → knee → stirrup) placed relative to each frame's
+// jockey box. Fractions of the box: x of width, y of height (1 = the horse's back).
+const LEG = {
+  hip: [0.28, 0.88],
+  knee: [0.88, 1.1],
+  foot: [0.46, 1.62],
+  width: 13,
+}
+const point = ([fx, fy], [x, , w, h]) => `${(x + fx * w).toFixed(1)} ${(fy * h).toFixed(1)}`
+const breeches = source.jockey
+  .map((box, i) => {
+    const d = `M${point(LEG.hip, box)}L${point(LEG.knee, box)}L${point(LEG.foot, box)}`
+    return (
+      `<path transform="translate(${width * i} 0)" d="${d}" fill="none" stroke="#000" ` +
+      `stroke-width="${LEG.width}" stroke-linecap="round" stroke-linejoin="round"/>`
+    )
+  })
+  .join('')
+
 writeFileSync(new URL('gallop-horse.svg', outDir), svg(horse))
+writeFileSync(new URL('gallop-breeches.svg', outDir), svg(breeches))
 writeFileSync(new URL('gallop-jockey.svg', outDir), svg(jockey))
 writeFileSync(
   new URL('gallop.meta.ts', outDir),

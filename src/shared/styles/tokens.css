@@ -27,6 +27,8 @@
   --color-pole: #c8102e;
   --color-horse: #2a1d14;
   --color-horse-shadow: rgb(10 30 15 / 0.35);
+  --color-breeches: #f6f4ee;
+  --breeches-edge: drop-shadow(0 0 0.5px rgb(0 0 0 / 0.6));
   --silks-halo: drop-shadow(0 0 1px rgb(255 255 255 / 0.95))
     drop-shadow(0 0 0.5px rgb(255 255 255 / 0.95));
   /* Starting stalls: brushed aluminium with black number plates. */
