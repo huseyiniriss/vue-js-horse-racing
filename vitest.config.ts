@@ -17,7 +17,9 @@ export default mergeConfig(
       coverage: {
         provider: 'v8',
         include: ['src/**/*.{ts,vue}'],
-        exclude: ['src/**/*.spec.ts', 'src/test/**', 'src/app/main.ts'],
+        exclude: ['src/**/*.spec.ts', 'src/test/**', 'src/app/main.ts', 'src/**/index.ts'],
+        // A floor, not a target: CI fails if coverage drops below today's level.
+        thresholds: { statements: 93, branches: 87, functions: 95, lines: 94 },
       },
     },
   }),

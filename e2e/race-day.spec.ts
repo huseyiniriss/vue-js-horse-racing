@@ -63,8 +63,9 @@ test.describe('race day', () => {
     await game.togglePlayback()
     await game.wait(1_000)
     const resumed = await game.runnerProgress()
+    expect(resumed).toHaveLength(paused.length)
     resumed.forEach((progress, index) => {
-      expect(progress).toBeGreaterThanOrEqual(paused[index] ?? Infinity)
+      expect(progress).toBeGreaterThan(paused[index] ?? 1)
     })
   })
 
@@ -75,10 +76,9 @@ test.describe('race day', () => {
     await game.waitUntil(async () => (await game.resultRounds.count()) === 1)
 
     // The horse wearing the "1st" badge on the track tops the result table.
-    const winnerLane = game.runners.filter({ hasText: '1st' })
-    const winnerLabel = await winnerLane.locator('xpath=ancestor::li[1]').getAttribute('aria-label')
-    const winnerName = winnerLabel?.split(', ')[1] ?? ''
-    expect(winnerName).not.toBe('')
+    const winnerLane = game.lanes.filter({ has: game.runners.filter({ hasText: '1st' }) })
+    await expect(winnerLane).toHaveCount(1)
+    const winnerName = await game.horseNameIn(winnerLane)
     await expect(game.resultRounds.first().locator('tbody tr').first()).toContainText(winnerName)
     await expect(game.announcer).toContainText(`${winnerName} wins`)
   })

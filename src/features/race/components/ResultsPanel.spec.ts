@@ -18,9 +18,7 @@ describe('ResultsPanel', () => {
     const pinia = setupGame()
     const race = useRaceStore()
     const horses = useHorsesStore()
-    const wrapper = mount(ResultsPanel, {
-      global: { plugins: [pinia], stubs: { transition: false } },
-    })
+    const wrapper = mount(ResultsPanel, { global: { plugins: [pinia] } })
 
     race.generateProgram()
     race.start()
@@ -34,10 +32,13 @@ describe('ResultsPanel', () => {
 
     const rows = rounds[0]!.findAll('tbody tr')
     expect(rows).toHaveLength(10)
-    const winner = race.results[0]!.placings[0]!
-    expect(rows[0]!.text()).toContain('1')
-    expect(rows[0]!.text()).toContain(horses.getHorse(winner.horseId).name)
-    expect(rows[0]!.text()).toMatch(/\d:\d{2}\.\d{2}/)
-    expect(rows[1]!.text()).toMatch(/\+\d+\.\d{2}/)
+    const [winner, second] = race.results[0]!.placings
+    const cells = (row: number) => rows[row]!.findAll('td').map((cell) => cell.text())
+
+    expect(cells(0)[0]).toBe('1')
+    expect(cells(0)[1]).toBe(horses.getHorse(winner!.horseId).name)
+    expect(cells(0)[2]).toMatch(/^\d:\d{2}\.\d{2}$/)
+    expect(cells(1)[0]).toBe('2')
+    expect(cells(1)[2]).toBe(`+${(second!.finishTime - winner!.finishTime).toFixed(2)}`)
   })
 })

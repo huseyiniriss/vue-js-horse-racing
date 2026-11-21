@@ -18,7 +18,8 @@ watch(
   ([status, roundIndex], [previousStatus, previousRoundIndex]) => {
     const round = race.currentRound
     if (status !== 'running' || !round) return
-    if (previousStatus === 'ready' || roundIndex !== previousRoundIndex) {
+    const isResume = previousStatus === 'paused'
+    if ((previousStatus !== 'running' && !isResume) || roundIndex !== previousRoundIndex) {
       message.value = RACE_COPY.announceRoundStart(round.index + 1, round.distance)
     }
   },

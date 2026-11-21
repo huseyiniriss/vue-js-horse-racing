@@ -18,6 +18,7 @@ export class RaceDayPage {
   readonly programRounds: Locator
   readonly resultRounds: Locator
   readonly runners: Locator
+  readonly lanes: Locator
   readonly announcer: Locator
 
   constructor(private readonly page: Page) {
@@ -29,6 +30,7 @@ export class RaceDayPage {
     this.programRounds = page.getByTestId('program-round')
     this.resultRounds = page.getByTestId('result-round')
     this.runners = page.getByTestId('runner')
+    this.lanes = page.locator('[data-testid^="lane-"]:not([data-testid="lane-name"])')
     this.announcer = page.getByTestId('announcer')
   }
 
@@ -67,6 +69,14 @@ export class RaceDayPage {
         Number((element as HTMLElement).style.getPropertyValue('--progress')),
       ),
     )
+  }
+
+  /** Name of the horse in a lane, read from the lane's visually hidden label. */
+  async horseNameIn(lane: Locator): Promise<string> {
+    const label = await lane.getByTestId('lane-name').textContent()
+    const name = label?.replace(/^Lane \d+, /, '').trim() ?? ''
+    expect(name).not.toBe('')
+    return name
   }
 
   lane(lane: number): Locator {
