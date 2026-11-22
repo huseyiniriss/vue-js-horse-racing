@@ -1,7 +1,7 @@
 export interface PaceModel {
   /** Average speed of a condition-50 horse, in metres per second. */
   readonly baseSpeed: number
-  /** Speed bonus at condition 100 (and penalty at condition 0), as a fraction of baseSpeed. */
+  /** Speed bonus at condition 100 (and penalty at condition 1), as a fraction of baseSpeed. */
   readonly conditionWeight: number
   /** Day-to-day form: each horse's speed for a round is scaled by up to ± this fraction. */
   readonly formVariance: number

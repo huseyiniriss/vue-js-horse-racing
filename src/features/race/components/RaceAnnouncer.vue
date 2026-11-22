@@ -42,7 +42,9 @@ watch(
     const result = race.results[count - 1]
     const winner = result?.placings[0]
     if (!result || !winner || count <= previous) return
-    const parts = [RACE_COPY.announceWinner(count, horses.getHorse(winner.horseId).name)]
+    const parts = [
+      RACE_COPY.announceWinner(result.roundIndex + 1, horses.getHorse(winner.horseId).name),
+    ]
     if (count === race.roundCount) parts.push(RACE_COPY.announceDayComplete)
     message.value = parts.join(' ')
   },

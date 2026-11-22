@@ -3,6 +3,8 @@
  * A tactile, physical-feeling button: the key has visible depth and travels down
  * when pressed. Hover, focus-visible, pressed and disabled states are all defined.
  */
+import { useTemplateRef } from 'vue'
+
 withDefaults(
   defineProps<{
     variant?: 'primary' | 'secondary'
@@ -12,10 +14,16 @@ withDefaults(
 )
 
 defineEmits<{ click: [event: MouseEvent] }>()
+
+const element = useTemplateRef<HTMLButtonElement>('element')
+
+/** The native button, for parents that manage focus. */
+defineExpose({ element })
 </script>
 
 <template>
   <button
+    ref="element"
     type="button"
     class="app-button"
     :class="`app-button--${variant}`"

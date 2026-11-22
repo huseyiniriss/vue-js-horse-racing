@@ -9,7 +9,8 @@ import { useRaceStore } from '../store/race.store'
 const race = useRaceStore()
 const generateHintId = useId()
 const playbackHintId = useId()
-const root = useTemplateRef<HTMLElement>('root')
+const generateButton = useTemplateRef<InstanceType<typeof AppButton>>('generateButton')
+const playbackButton = useTemplateRef<InstanceType<typeof AppButton>>('playbackButton')
 
 const playbackLabel = computed(() => RACE_COPY[race.playbackAction ?? 'start'])
 const playbackHint = computed(() => (race.status === 'idle' ? RACE_COPY.startLocked : null))
@@ -19,16 +20,19 @@ const playbackHint = computed(() => (race.status === 'idle' ? RACE_COPY.startLoc
 watch(
   () => race.status,
   (status) => {
-    const buttons = root.value?.querySelectorAll('button')
-    if (status === 'finished' && buttons?.[1] === document.activeElement) buttons[0]?.focus()
+    if (status !== 'finished') return
+    if (playbackButton.value?.element === document.activeElement) {
+      generateButton.value?.element?.focus()
+    }
   },
   { flush: 'post' },
 )
 </script>
 
 <template>
-  <div ref="root" class="race-controls">
+  <div class="race-controls">
     <AppButton
+      ref="generateButton"
       data-testid="generate"
       :disabled="!race.canGenerate"
       :title="race.canGenerate ? undefined : RACE_COPY.generateLocked"
@@ -38,6 +42,7 @@ watch(
       {{ RACE_COPY.generate }}
     </AppButton>
     <AppButton
+      ref="playbackButton"
       variant="primary"
       data-testid="playback"
       :disabled="race.playbackAction === null"

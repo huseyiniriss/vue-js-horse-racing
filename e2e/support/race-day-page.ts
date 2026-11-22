@@ -90,10 +90,6 @@ export class RaceDayPage {
     expect(name).not.toBe('')
     return name
   }
-
-  lane(lane: number): Locator {
-    return this.page.getByTestId(`lane-${lane}`)
-  }
 }
 
 async function documentReady(page: Page): Promise<void> {
