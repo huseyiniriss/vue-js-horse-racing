@@ -38,6 +38,11 @@ including mid-race and between rounds.
   than merely unlikely, and the full status × event matrix is unit tested.
 - The engine's per-round simulation stays private to the store; the UI reads derived
   `lanes` (progress, finished, position) instead.
+- Trade-off: Pinia only treats returned, writable refs as state. Read-only and private
+  state does not show up as editable in devtools, is skipped by plugins such as
+  persistence, and would need manual hydration under SSR. This app has no SSR and no
+  persistence, and the store's integrity matters more than editing it from devtools.
+  If either is ever needed, return the plain refs and keep the guarantee in the actions.
 
 ## Alternatives considered
 

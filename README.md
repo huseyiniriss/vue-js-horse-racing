@@ -90,7 +90,7 @@ from a fixed seed, so results are deterministic.
 
 The brief leaves a few points open; these are the choices made:
 
-1. The game always has 20 horses; "1–20" is the numbering of the list.
+1. The game always has 20 horses; "a list of 1–20 horses" is read as the size of the stable, which the rules fix at 20.
 2. Condition makes a horse faster on average, but form and luck still matter: a much
    fitter horse almost always wins, a slightly fitter one only more often.
 3. Condition stays the same for the whole session.

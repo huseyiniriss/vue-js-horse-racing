@@ -26,4 +26,4 @@ A pyramid, all of it deterministic thanks to seeds:
 
 - Refactoring the UI does not break domain tests; changing rules breaks exactly the
   tests named after them.
-- Screenshots must be regenerated (`npm run test:visual:update`) when the design changes on purpose.
+- Screenshots must be regenerated (`npm run test:visual:update:docker`) when the design changes on purpose.

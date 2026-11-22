@@ -11,7 +11,7 @@ static icon or emoji, which reads as a toy and does not actually gallop.
 
 - **The figure** is traced from Eadweard Muybridge's _The Horse in Motion_ (1878, public
   domain): 15 frames of a real gallop. `scripts/build-gallop-sprites.mjs` turns the traced
-  frames (`scripts/data/muybridge-gallop.json`) into two static sprite files and a tiny
+  frames (`scripts/data/muybridge-gallop.json`) into three static sprite files (horse, breeches, jockey) and a tiny
   meta module (`npm run sprites`).
 - **Rendering** uses the sprites as CSS masks: one layer paints the horse in a dark bay,
   a second paints the jockey's white breeches, a third the jockey in the horse's color. Each layer runs the same
@@ -20,7 +20,7 @@ static icon or emoji, which reads as a toy and does not actually gallop.
 - **Identity** follows racing: the horse's unique color is its **silks**. Each horse also
   gets one of ten registered silks patterns (seeded) with a trim picked for WCAG contrast.
   Lists show a silks icon; the track shows the jockey in the silks color.
-- Colors come from Kelly's 20 colors of maximum contrast, so all 20 stay distinguishable.
+- Colors come from Kelly's 22 colors of maximum contrast minus white and black, so all 20 stay distinguishable.
 
 ## Consequences
 
