@@ -18,8 +18,8 @@ A pyramid, all of it deterministic thanks to seeds:
   frame-rate independence, finished horses always rank ahead) and statistically
   (condition matters, luck still plays a part).
 - Visual baselines are committed (`e2e/__screenshots__/`) and generated in the official
-  Playwright Docker image, the same Linux environment CI uses, so fonts and
-  anti-aliasing match (`npm run test:visual:update:docker`).
+  Playwright Docker image on arm64, the same image and architecture the CI E2E job
+  runs on, so fonts and anti-aliasing match (`npm run test:visual:update:docker`).
 - Coverage has a floor in `vitest.config.ts`; CI fails if it drops.
 
 ## Consequences

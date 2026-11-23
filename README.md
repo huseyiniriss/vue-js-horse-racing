@@ -1,27 +1,51 @@
 # Horse Racing
 
-An interactive horse racing game built with **Vue 3, TypeScript and Pinia**: generate a
+An interactive horse racing game built with **Vue 3, TypeScript and Pinia**. Generate a
 race program, start it, and watch six rounds run one after another, with results arriving
 as each round finishes.
 
-**Live demo:** https://huseyiniriss.github.io/insider-horse-racing/
+![Race day, round 3 paused: the stable, the track with the photo finish of round 2, the program and results](docs/screenshot.png)
 
-![Race day: the stable, the track with a photo-finish print, the program and results](docs/screenshot.png)
+## How to play
 
-## Features
+1. **Generate program** draws six rounds of ten horses each from the stable of 20.
+2. **Start** runs the rounds one at a time. **Pause** freezes every horse where it is;
+   **Resume** carries on from the same frame.
+3. Each result appears in **Results** the moment its round finishes, followed by a photo
+   finish of the field.
+4. When all six rounds are done, generate a new program and race again.
 
-- **20 horses**, each with a unique color worn as racing **silks**, and a condition of 1–100.
-- **Generate program:** six rounds (1200 → 2200 m), ten horses drawn at random per round.
-- **Start / Pause / Resume:** rounds run one at a time; pause freezes every horse exactly
-  where it is.
-- **Results** per round, racecard style: the winner's time, then the gap for everyone behind.
-- **Animated horses** traced from Eadweard Muybridge's _The Horse in Motion_ (1878), in a
-  broadcast-style racecourse with starting stalls, distance markers and a winning post.
-- **Photo finish** after every round, built from the same finish times as the result.
-- **Replayable:** one seed reproduces a whole session; the footer links the program on
-  screen (`?seed=42&program=3`).
-- Responsive (phone, tablet, desktop), keyboard accessible, screen-reader announcements,
-  reduced-motion support.
+The footer shows the session's seed. **Replay this race day** opens the same horses and
+the same program, so any race can be watched again exactly as it ran.
+
+## The brief, mapped to the code
+
+| The brief asks for                                       | Where it lives                                                  |
+| -------------------------------------------------------- | --------------------------------------------------------------- |
+| 20 horses, each with a unique color and condition 1–100  | `features/horses/domain/generate-horses.ts`, `horse-palette.ts` |
+| Generate: 6 rounds, 10 random horses from the 20 each    | `features/race/domain/schedule.ts`, `race.rules.ts`             |
+| Distances 1200, 1400, 1600, 1800, 2000, 2200 m, in order | `features/race/domain/race.rules.ts`                            |
+| Start / Pause, rounds run one at a time                  | `features/race/store/race.store.ts`, `domain/race-status.ts`    |
+| Horses move on the track                                 | `features/race/components/RaceTrack.vue`, `TrackLane.vue`       |
+| Results per round, in the Results panel                  | `features/race/components/ResultsPanel.vue`                     |
+| Horse list, program and results side by side             | `app/App.vue`, `HorseList.vue`, `ProgramPanel.vue`              |
+| Pinia for state, component-based design                  | `features/*/store`, `features/*/components`                     |
+| Bonus: unit, E2E and visual tests                        | `src/**/*.spec.ts`, `e2e/`                                      |
+
+Each rule of the brief has a unit test named after it (`rule: …`), so breaking a rule
+fails exactly the test that describes it.
+
+## Beyond the brief
+
+Small, self-contained additions; removing any of them leaves the core untouched.
+
+- **Real gallop.** The horses are traced from Eadweard Muybridge's _The Horse in Motion_
+  (1878) and animated as CSS sprites, with jockeys in their horse's silks.
+- **Broadcast-style track** with starting stalls, distance markers and a winning post.
+- **Photo finish** after every round, drawn from the same finish times as the result.
+- **Replayable sessions** from a seed in the URL (`?seed=42&program=3`).
+- **Accessible:** responsive from phone to desktop, keyboard operable, race commentary
+  for screen readers, reduced-motion support, and an axe check in the E2E suite.
 
 ## Quick start
 
@@ -45,7 +69,7 @@ npm run dev          # http://localhost:5173
 | `npm run sprites`                   | Rebuild the gallop sprites from the traced frames       |
 
 Visual baselines are platform-specific, so they are generated and checked inside the
-official Playwright Docker image (the same one CI uses). The `:docker` scripts need Docker.
+official Playwright Docker image, the same one CI uses. The `:docker` scripts need Docker.
 
 ## Architecture
 
@@ -83,14 +107,15 @@ The reasoning, alternatives and trade-offs are in the
 | E2E       | Playwright (desktop + mobile) | Generate, start, pause/resume, full race day, replay, axe check |
 | Visual    | Playwright screenshots        | Idle, ready, paused and finished states with a frozen clock     |
 
-Tests named `rule: …` map one-to-one to the requirements in the brief. Everything runs
-from a fixed seed, so results are deterministic.
+Everything runs from a fixed seed and a controlled clock, so results are deterministic.
+CI runs the quality gate first, then the E2E, accessibility and visual tests.
 
 ## Assumptions
 
 The brief leaves a few points open; these are the choices made:
 
-1. The game always has 20 horses; "a list of 1–20 horses" is read as the size of the stable, which the rules fix at 20.
+1. The game always has 20 horses; "a list of 1–20 horses" is read as the size of the
+   stable, which the rules fix at 20.
 2. Condition makes a horse faster on average, but form and luck still matter: a much
    fitter horse almost always wins, a slightly fitter one only more often.
 3. Condition stays the same for the whole session.

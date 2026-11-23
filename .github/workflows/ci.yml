@@ -29,8 +29,9 @@ jobs:
   e2e:
     name: E2E, accessibility and visual tests
     needs: quality
-    runs-on: ubuntu-latest
-    # Same image the visual baselines were generated in, so screenshots match pixel for pixel.
+    # Same image and architecture (arm64) the visual baselines were generated in, so
+    # screenshots match pixel for pixel.
+    runs-on: ubuntu-24.04-arm
     container:
       image: mcr.microsoft.com/playwright:v1.65.1-noble
       options: --ipc=host
