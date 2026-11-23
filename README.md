@@ -1,8 +1,12 @@
 # Horse Racing
 
+[![CI](https://github.com/huseyiniriss/vue-js-horse-racing/actions/workflows/ci.yml/badge.svg)](https://github.com/huseyiniriss/vue-js-horse-racing/actions/workflows/ci.yml)
+
 An interactive horse racing game built with **Vue 3, TypeScript and Pinia**. Generate a
 race program, start it, and watch six rounds run one after another, with results arriving
 as each round finishes.
+
+**Live demo:** https://vue-js-horse-racing.vercel.app
 
 ![Race day, round 3 paused: the stable, the track with the photo finish of round 2, the program and results](docs/screenshot.png)
 
